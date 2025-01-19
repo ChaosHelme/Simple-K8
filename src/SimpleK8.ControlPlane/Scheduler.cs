@@ -4,7 +4,7 @@ using SimpleK8.Worker;
 
 namespace SimpleK8.ControlPlane;
 
-public class Scheduler : IScheduler
+public class Scheduler(IApiServer apiServer) : IScheduler
 {
 	public void SchedulePod(Pod pod, List<IWorkerNode> availableNodes, ILogger<Scheduler> logger)
 	{

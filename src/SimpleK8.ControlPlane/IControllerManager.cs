@@ -1,9 +1,7 @@
-﻿using SimpleK8.Core;
-
-namespace SimpleK8.ControlPlane;
+﻿namespace SimpleK8.ControlPlane;
 
 public interface IControllerManager
 {
-	void AddPod(Pod pod);
-	void ManageControllers();
+	void StartControllers(CancellationToken cancellationToken);
+	void ManageControllers(CancellationToken cancellationToken);
 }
