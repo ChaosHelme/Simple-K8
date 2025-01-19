@@ -28,7 +28,6 @@ internal static class WebApplicationBuilderExtension {
 		// 	.AddScoped<IDbConnectionProvider, TransactionalDbConnectionProvider>(sp => sp.GetRequiredService<TransactionalDbConnectionProvider>())
 		// 	.AddScoped<IDbContextResolver, ModuleDbContextResolver>();
 		
-		
 		builder.Services.AddDefaultApiVersioning();
 		
 		var application = builder.Build();

@@ -6,7 +6,7 @@ namespace SimpleK8.ControlPlane;
 public interface IApiServer
 {
 	List<Deployment> GetDesiredDeployments();
-	List<Deployment> GetCurrentDeployments();
+	Task<List<Deployment>?> GetCurrentDeployments();
 	void ApplyDeploymentDifferences(List<DeploymentDifference> diff);
 	void SetDesiredReplicaCount(int diffDesiredReplicas);
 	int GetDesiredReplicaCount();

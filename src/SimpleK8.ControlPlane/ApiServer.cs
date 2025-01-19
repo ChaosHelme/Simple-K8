@@ -1,19 +1,32 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Net.Http.Json;
+using Microsoft.Extensions.Logging;
 using SimpleK8.ControlPlane.Controllers.Deployment;
 using SimpleK8.Core;
 
 namespace SimpleK8.ControlPlane;
 
-public class ApiServer(IStore store, ILogger<ApiServer> logger) : IApiServer
+public class ApiServer : IApiServer, IDisposable
 {
+	readonly HttpClient _httpClient;
+	
+	const string ApiServerUrl = "http://localhost:5077/api/v1/";
+
+	public ApiServer(IHttpClientFactory httpClientFactory,
+		ILogger<ApiServer> logger)
+	{
+		_httpClient  = httpClientFactory.CreateClient(nameof(ApiServer));
+		_httpClient.BaseAddress = new Uri(ApiServerUrl);
+	}
+	
 	public List<Deployment> GetDesiredDeployments()
 	{
 		return new List<Deployment>();
 	}
 
-	public List<Deployment> GetCurrentDeployments()
+	public async Task<List<Deployment>?> GetCurrentDeployments()
 	{
-		return new List<Deployment>();
+		var list = await _httpClient.GetFromJsonAsync<List<Deployment>>("deployments");
+		return list;
 	}
 	
 	public void ApplyDeploymentDifferences(List<DeploymentDifference> diff)
@@ -60,5 +73,10 @@ public class ApiServer(IStore store, ILogger<ApiServer> logger) : IApiServer
 	public void UpdatePodStatus(string podId, PodStatus status)
 	{
 		store.Save($"pod_{podId}_{status}", status.ToString());
+	}
+
+	public void Dispose()
+	{
+		_httpClient.Dispose();
 	}
 }

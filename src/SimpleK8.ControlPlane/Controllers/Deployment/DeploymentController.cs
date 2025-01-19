@@ -51,7 +51,7 @@ public class DeploymentController(
     async Task Reconcile(CancellationToken cancellationToken)
     {
         var desiredDeployments = apiServer.GetDesiredDeployments();
-        var currentDeployments = apiServer.GetCurrentDeployments();
+        var currentDeployments = await apiServer.GetCurrentDeployments();
 
         foreach (var desiredDeployment in desiredDeployments)
         {
