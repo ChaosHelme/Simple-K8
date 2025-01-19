@@ -29,6 +29,7 @@ public class HostedService(ILogger<HostedService> logger, IHostApplicationLifeti
 						registry.Register("myapp", pod);
 					}
 
+					// Simulate "load"
 					for (var i = 0; i < 10; i++)
 					{
 						var pod = loadBalancer.GetNextPod("myapp");
@@ -37,15 +38,22 @@ public class HostedService(ILogger<HostedService> logger, IHostApplicationLifeti
 							logger.LogInformation($"No pod found for {i}");
 							continue;
 						}
+
 						logger.LogInformation($"Request routed to pod {pod.Id}");
 					}
 
 					await deployment.Scale(5);
 
 					await deployment.UpdateImage("myapp:v2");
-					
+
+					deployment.SimulateRandomFailures(3);
+
+					await Task.Delay(10000, cancellationToken);
+
+					deployment.StopAutoHealing();
+
 					logger.LogInformation($"Simulation completed");
-					
+
 					_exitCode = 0;
 				}
 				catch (Exception ex)
