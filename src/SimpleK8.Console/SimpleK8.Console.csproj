@@ -11,4 +11,8 @@
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\SimpleK8.Core\SimpleK8.Core.csproj" />
+    </ItemGroup>
+
 </Project>

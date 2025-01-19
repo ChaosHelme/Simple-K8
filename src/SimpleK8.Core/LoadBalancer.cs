@@ -1,11 +1,26 @@
 ﻿namespace SimpleK8.Core;
 
-public class LoadBalancer
+public class LoadBalancer(IServiceRegistry serviceRegistry)
 {
-	private ServiceRegistry serviceRegistry;
-
-	public Pod GetNextPod(string serviceName)
+	readonly Dictionary<string, int> _roundRobinCounters = [];
+	
+	public Pod? GetNextPod(string serviceName)
 	{
-		return null;
+		var pods = serviceRegistry.GetPodsForService(serviceName);
+		if (pods.Count == 0)
+		{
+			return null;
+		}
+
+		if (!_roundRobinCounters.TryGetValue(serviceName, out var value))
+		{
+            value = 0;
+            _roundRobinCounters[serviceName] = value;
+		}
+
+		var index = value % pods.Count;
+		_roundRobinCounters[serviceName] = ++value;
+
+		return pods[index];
 	}
 }

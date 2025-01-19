@@ -2,6 +2,8 @@
 
 public enum ContainerStatus
 {
-	Unhealthy,
-	Healthy,
+	Created, 
+	Running,
+	Stopped,
+	Failed
 }

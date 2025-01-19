@@ -1,14 +1,32 @@
-﻿namespace SimpleK8.Core;
+﻿using Microsoft.Extensions.Logging;
 
-public class ServiceRegistry
+namespace SimpleK8.Core;
+
+public class ServiceRegistry(ILogger<ServiceRegistry> logger) : IServiceRegistry
 {
-	private Dictionary<string, List<Pod>> services;
+	readonly Dictionary<string, List<Pod>> _services = [];
 
-	public void Register(string serviceName, Pod pod) { /* Implementation */ }
-	public void Deregister(string serviceName, Pod pod) { /* Implementation */ }
-
-	public List<Pod> GetPodsForService(string serviceName)
+	public void Register(string serviceName, Pod pod)
 	{
-		return new List<Pod>();
+		logger.LogInformation($"Registering pod {pod.Id} for service {serviceName}");
+		if (!_services.TryGetValue(serviceName, out var value))
+		{
+            value = [];
+            _services[serviceName] = value;
+		}
+
+        value.Add(pod);
 	}
+
+	public void Deregister(string serviceName, Pod pod)
+	{
+		logger.LogInformation($"Deregistering pod {pod.Id} from service {serviceName}");
+		if (_services.TryGetValue(serviceName, out var value))
+		{
+            value.Remove(pod);
+		}
+	}
+
+	public List<Pod> GetPodsForService(string serviceName) 
+		=> _services.TryGetValue(serviceName, out var service) ? service : [];
 }

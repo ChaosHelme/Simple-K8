@@ -1,11 +1,27 @@
 ﻿namespace SimpleK8.Core;
 
-public class Pod
+public class Pod(List<Container> containers)
 {
-	public string Id { get; private set; }
-	public List<Container> Containers { get; private set; }
+	public string Id => Guid.NewGuid().ToString();
 	public PodStatus Status { get; private set; }
 
-	public void Create() { /* Implementation */ }
-	public void Delete() { /* Implementation */ }
+	public async Task Create()
+	{
+		Console.WriteLine($"Creating pod {Id}");
+		foreach (var container in containers)
+		{
+			await container.Start();
+		}
+		Status = PodStatus.Running;
+	}
+
+	public void Delete()
+	{
+		Console.WriteLine($"Deleting pod {Id}");
+		foreach (var container in containers)
+		{
+			container.Stop();
+		}
+		Status = PodStatus.Succeeded;
+	}
 }

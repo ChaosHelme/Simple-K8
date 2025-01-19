@@ -2,6 +2,8 @@
 
 public enum PodStatus
 {
-	Idle,
+	Pending,
 	Running,
+	Succeeded,
+	Failed
 }
