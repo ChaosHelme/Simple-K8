@@ -21,7 +21,7 @@ public class KubernetesCluster(
 	public void AddWorkerNode(string nodeName)
 	{
 		WorkerNodes.Add(new WorkerNode(nodeName, serviceProvider.GetRequiredService<ILogger<WorkerNode>>()));
-		logger.LogInformation($"Added worker node: {nodeName}");
+		logger.LogInformation("Added worker node: {nodeName}", nodeName);
 	}
 	
 	public async Task RunCluster(CancellationToken token)

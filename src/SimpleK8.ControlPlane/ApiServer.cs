@@ -10,6 +10,14 @@ public class ApiServer(IStore store, ILogger<ApiServer> logger) : IApiServer
 		logger.LogInformation("Handling request {request}", request);
 	}
 
+	public List<Deployment> GetDesiredDeployments() => throw new NotImplementedException();
+
+	public List<Deployment> GetCurrentDeployments() => throw new NotImplementedException();
+	public void ApplyDeploymentChange(DeploymentDifference diff)
+	{
+		throw new NotImplementedException();
+	}
+
 	public void UpdatePodStatus(string podId, PodStatus status)
 	{
 		store.Save($"pod_{podId}_{status}", status.ToString());

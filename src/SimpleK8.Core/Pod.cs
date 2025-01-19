@@ -6,6 +6,7 @@ namespace SimpleK8.Core;
 public class Pod
 {
 	public string Id { get; private set; }
+	public string Image { get; }
 	public PodStatus Status { get; private set; }
 
 	public bool HasFailedContainers => Containers.Any(c => c.Status == ContainerStatus.Failed);
@@ -17,9 +18,11 @@ public class Pod
 	public Pod(string image, ILogger<Pod> logger, IServiceProvider serviceProvider)
 	{
 		Id = Guid.NewGuid().ToString();
+		Image = image;
 		Containers = [new Container(image, serviceProvider.GetRequiredService<ILogger<Container>>())];
-		_logger = logger;
 		Status = PodStatus.Pending;
+		
+		_logger = logger;
 	}
 	
 	public async Task Start()
