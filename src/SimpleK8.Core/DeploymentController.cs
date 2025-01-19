@@ -26,7 +26,7 @@ public class DeploymentController
 			var newPod = new Pod(new List<Container>
 			{
 				new Container(_currentImage, _serviceProvider.GetRequiredService<ILogger<Container>>())
-			});
+			}, _serviceProvider.GetRequiredService<ILogger<Pod>>());
 			await newPod.Create();
 			ManagedPods.Add(newPod);
 		}
@@ -51,7 +51,7 @@ public class DeploymentController
 			var newPod = new Pod(new List<Container>
 			{
 				new Container(newImage, _serviceProvider.GetRequiredService<ILogger<Container>>())
-			});
+			}, _serviceProvider.GetRequiredService<ILogger<Pod>>());
 			await newPod.Create();
 			ManagedPods.Add(newPod);
 			oldPod.Delete();

@@ -34,16 +34,17 @@ public class HostedService(ILogger<HostedService> logger, IHostApplicationLifeti
 						var pod = loadBalancer.GetNextPod("myapp");
 						if (pod == null)
 						{
-							System.Console.WriteLine($"No pod found for {i}");
+							logger.LogInformation($"No pod found for {i}");
+							continue;
 						}
-						System.Console.WriteLine($"Request routed to pod {pod.Id}");
+						logger.LogInformation($"Request routed to pod {pod.Id}");
 					}
 
 					await deployment.Scale(5);
 
 					await deployment.UpdateImage("myapp:v2");
 					
-					System.Console.WriteLine($"Simulation completed");
+					logger.LogInformation($"Simulation completed");
 					
 					_exitCode = 0;
 				}
@@ -54,7 +55,6 @@ public class HostedService(ILogger<HostedService> logger, IHostApplicationLifeti
 				}
 				finally
 				{
-					// Stop the application once the work is done
 					appLifetime.StopApplication();
 				}
 			}, cancellationToken);

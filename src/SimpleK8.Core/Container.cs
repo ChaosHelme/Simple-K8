@@ -10,14 +10,14 @@ public class Container(string image, ILogger<Container> logger)
 	
 	public async Task Start()
 	{
-		Console.WriteLine($"Starting container {Id} with image {Image}");
+		logger.LogInformation($"Starting container {Id} with image {Image}");
 		await Task.Delay(2500); // Simulate startup time
 		Status = ContainerStatus.Running;
 	}
 
 	public void Stop()
 	{
-		Console.WriteLine($"Stopping container {Id}");
+		logger.LogInformation($"Stopping container {Id}");
 		Status = ContainerStatus.Stopped;
 	}
 }

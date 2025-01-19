@@ -1,13 +1,15 @@
-﻿namespace SimpleK8.Core;
+﻿using Microsoft.Extensions.Logging;
 
-public class Pod(List<Container> containers)
+namespace SimpleK8.Core;
+
+public class Pod(List<Container> containers, ILogger<Pod> logger)
 {
 	public string Id => Guid.NewGuid().ToString();
 	public PodStatus Status { get; private set; }
 
 	public async Task Create()
 	{
-		Console.WriteLine($"Creating pod {Id}");
+		logger.LogInformation($"Creating pod {Id}");
 		foreach (var container in containers)
 		{
 			await container.Start();
@@ -17,7 +19,7 @@ public class Pod(List<Container> containers)
 
 	public void Delete()
 	{
-		Console.WriteLine($"Deleting pod {Id}");
+		logger.LogInformation($"Deleting pod {Id}");
 		foreach (var container in containers)
 		{
 			container.Stop();

@@ -15,7 +15,6 @@ void ConfigureServices(IServiceCollection serviceCollection)
 	serviceCollection.AddLogging(loggingBuilder => loggingBuilder.AddConsole());
 	serviceCollection.AddHostedService<HostedService>();
 	serviceCollection.AddScoped<IServiceRegistry, ServiceRegistry>();
-	serviceCollection.AddScoped<ILogger<Container>, Logger<Container>>();
 }
 
  
