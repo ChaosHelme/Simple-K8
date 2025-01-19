@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleK8.Console", "SimpleK8.Console\SimpleK8.Console.csproj", "{F881131D-4ED4-4C67-8B3A-7A40C2C9B292}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleK8.Core", "SimpleK8.Core\SimpleK8.Core.csproj", "{610BD893-FAB2-4527-8B0A-EDA0E76612A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{F881131D-4ED4-4C67-8B3A-7A40C2C9B292}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F881131D-4ED4-4C67-8B3A-7A40C2C9B292}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F881131D-4ED4-4C67-8B3A-7A40C2C9B292}.Release|Any CPU.Build.0 = Release|Any CPU
+		{610BD893-FAB2-4527-8B0A-EDA0E76612A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{610BD893-FAB2-4527-8B0A-EDA0E76612A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{610BD893-FAB2-4527-8B0A-EDA0E76612A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{610BD893-FAB2-4527-8B0A-EDA0E76612A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
