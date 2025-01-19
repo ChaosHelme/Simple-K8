@@ -39,6 +39,8 @@ public class DeploymentController(
 		
 		// 4. Reconcile differences
 		await ReconcileDifferences(differences, cancellationToken);
+		
+		apiServer.ApplyDeploymentDifferences(differences);
 	}
 	
 	List<DeploymentDifference> DetermineDifferences(List<Deployment> desired, List<Deployment> current)
@@ -50,45 +52,50 @@ public class DeploymentController(
 
 		foreach (var currentDeployment in currentList)
 		{
-			var deploymentDifference = new DeploymentDifference();
 			var desiredDeployment = desired.FirstOrDefault(x => x.Name.Equals(currentDeployment.Name));
 			if (desiredDeployment == null)
 			{
 				logger.LogError("No deployment found for {currentDeployment}", currentDeployment.Name);
 				continue;
 			}
-			if (currentDeployment.Image != desiredDeployment.Image)
+			
+			var deploymentDifference = new DeploymentDifference(
+				currentDeployment.Id,
+				currentDeployment.Name,
+				currentDeployment.Image, 
+				desiredDeployment.Image, 
+				currentDeployment.ReplicaCount,
+				desiredDeployment.ReplicaCount);
+			
+			var containsDifferences = deploymentDifference.DetermineDifferences();
+			if(containsDifferences)
 			{
-				deploymentDifference.image = desiredDeployment.Image;
+				result.Add(deploymentDifference);
 			}
-
-			if (currentDeployment.ReplicaCount != desiredDeployment.ReplicaCount)
-			{
-				deploymentDifference.replicas = desiredDeployment.ReplicaCount;
-			}
-			result.Add(deploymentDifference);
 		}
 
 		foreach (var desiredDeployment in desiredList)
 		{
-			var deploymentDifference = new DeploymentDifference();
+			
 			var currentDeployment = current.FirstOrDefault(x => x.Name.Equals(desiredDeployment.Name));
 			if (currentDeployment == null)
 			{
 				logger.LogError("No deployment found for {currentDeployment}", desiredDeployment.Name);
 				continue;
 			}
+			
+			var deploymentDifference = new DeploymentDifference(desiredDeployment.Id,
+				desiredDeployment.Name,
+				desiredDeployment.Image,
+				currentDeployment.Image,
+				desiredDeployment.ReplicaCount,
+				currentDeployment.ReplicaCount);
 
-			if (desiredDeployment.Image != currentDeployment.Image)
+			var containsDifferences = deploymentDifference.DetermineDifferences();
+			if(containsDifferences)
 			{
-				deploymentDifference.image = currentDeployment.Image;
+				result.Add(deploymentDifference);
 			}
-
-			if (desiredDeployment.ReplicaCount != currentDeployment.ReplicaCount)
-			{
-				deploymentDifference.replicas = currentDeployment.ReplicaCount;
-			}
-			result.Add(deploymentDifference);
 		}
 		
 		return result;
@@ -96,20 +103,19 @@ public class DeploymentController(
 	
 	async Task ReconcileDifferences(List<DeploymentDifference> differences, CancellationToken cancellationToken)
 	{
+		// Take action to reconcile each difference
+		// This could involve creating, updating, or deleting resources
 		foreach (var diff in differences)
 		{
-			if (diff.replicas != ManagedPods.Count)
+			if (diff.Replicas != ManagedPods.Count)
 			{
-				await ScaleTo(diff.replicas, cancellationToken);
+				await ScaleTo(diff.Replicas, cancellationToken);
 			}
 
-			if (ManagedPods.Any(p => p.Image != diff.image))
+			if (ManagedPods.Any(p => p.Image != diff.Image))
 			{
-				await UpdateImage(diff.image, cancellationToken);
+				await UpdateImage(diff.Image, cancellationToken);
 			}
-			// Take action to reconcile each difference
-			// This could involve creating, updating, or deleting resources
-			apiServer.ApplyDeploymentChange(diff);
 		}
 	}
 	

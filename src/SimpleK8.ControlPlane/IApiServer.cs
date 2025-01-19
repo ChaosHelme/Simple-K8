@@ -7,5 +7,5 @@ public interface IApiServer
 	void HandleRequest(string request);
 	List<Deployment> GetDesiredDeployments();
 	List<Deployment> GetCurrentDeployments();
-	void ApplyDeploymentChange(DeploymentDifference diff);
+	void ApplyDeploymentDifferences(List<DeploymentDifference> diff);
 }
