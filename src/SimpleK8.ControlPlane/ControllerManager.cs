@@ -7,9 +7,9 @@ namespace SimpleK8.ControlPlane;
 public class ControllerManager(IApiServer apiServer, ILogger<ControllerManager> logger, IServiceProvider serviceProvider) : IControllerManager
 {
 	readonly List<IController> _controllers = [
-		new DeploymentController(apiServer, "myapp:v1", 3, serviceProvider.GetRequiredService<ILogger<DeploymentController>>(), serviceProvider),
+		new DeploymentController(apiServer, serviceProvider.GetRequiredService<ILogger<DeploymentController>>()),
 		new StatefulSetController(apiServer, serviceProvider.GetRequiredService<ILogger<StatefulSetController>>()),
-		new ReplicaSetController(apiServer, serviceProvider.GetRequiredService<ILogger<ReplicaSetController>>())
+		new ReplicaSetController(apiServer, "myapp:v1", 3, serviceProvider.GetRequiredService<ILogger<ReplicaSetController>>(), serviceProvider)
 	];
 
 	public void StartControllers(CancellationToken cancellationToken)

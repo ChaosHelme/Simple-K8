@@ -1,21 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using SimpleK8.Core;
 
 namespace SimpleK8.ControlPlane.Controllers;
 
 public class DeploymentController(
 	IApiServer apiServer,
-	string initialImage, 
-	int initialReplicas,
-	ILogger<DeploymentController> logger,
-	IServiceProvider serviceProvider) : IController
+	ILogger<DeploymentController> logger) : IController
 {
-	public List<Pod> ManagedPods { get; private set; } = [];
-	
-	string _currentImage = initialImage;
-	int _desiredReplicas = initialReplicas;
-	
 	public async Task Run(CancellationToken cancellationToken)
 	{
 		logger.LogInformation("Deployment controller watching for changes...");
@@ -39,8 +30,11 @@ public class DeploymentController(
 		
 		// 4. Reconcile differences
 		await ReconcileDifferences(differences, cancellationToken);
-		
-		apiServer.ApplyDeploymentDifferences(differences);
+
+		if (differences.Count > 0)
+		{
+			apiServer.ApplyDeploymentDifferences(differences);
+		}
 	}
 	
 	List<DeploymentDifference> DetermineDifferences(List<Deployment> desired, List<Deployment> current)
@@ -103,18 +97,17 @@ public class DeploymentController(
 	
 	async Task ReconcileDifferences(List<DeploymentDifference> differences, CancellationToken cancellationToken)
 	{
-		// Take action to reconcile each difference
-		// This could involve creating, updating, or deleting resources
 		foreach (var diff in differences)
 		{
-			if (diff.Replicas != ManagedPods.Count)
+			if (diff.CurrentImage != diff.DesiredImage)
 			{
-				await ScaleTo(diff.Replicas, cancellationToken);
+				await UpdateImage(diff.DesiredImage, cancellationToken);
 			}
-
-			if (ManagedPods.Any(p => p.Image != diff.Image))
+            
+			if (diff.CurrentReplicas != diff.DesiredReplicas)
 			{
-				await UpdateImage(diff.Image, cancellationToken);
+				apiServer.SetDesiredReplicaCount(diff.DesiredReplicas);
+				// The ReplicaSetController will handle the actual scaling
 			}
 		}
 	}
@@ -122,35 +115,7 @@ public class DeploymentController(
 	async Task UpdateImage(string newImage, CancellationToken cancellationToken)
 	{
 		logger.LogInformation("Updating image to {newImage}", newImage);
-		_currentImage = newImage;
-		var oldPods = new List<Pod>(ManagedPods);
-		ManagedPods.Clear();
-
-		foreach (var oldPod in oldPods)
-		{
-			var newPod = new Pod(_currentImage, serviceProvider.GetRequiredService<ILogger<Pod>>(), serviceProvider);
-			await newPod.Start();
-			ManagedPods.Add(newPod);
-			oldPod.Stop();
-		}
-	}
-	
-	async Task ScaleTo(int replicas, CancellationToken cancellationToken)
-	{
-		logger.LogInformation("Scaling to {replicas} replicas", replicas);
-		while (ManagedPods.Count < replicas)
-		{
-			var newPod = new Pod(_currentImage, serviceProvider.GetRequiredService<ILogger<Pod>>(), serviceProvider);
-			await newPod.Start();
-			ManagedPods.Add(newPod);
-		}
-		while (ManagedPods.Count > replicas)
-		{
-			var podToRemove = ManagedPods.Last();
-			podToRemove.Stop();
-			ManagedPods.Remove(podToRemove);
-		}
-
-		await Task.Delay(2500, cancellationToken);
+		apiServer.SetDesiredImage(newImage);
+		// The ReplicaSetController will handle updating the pods
 	}
 }

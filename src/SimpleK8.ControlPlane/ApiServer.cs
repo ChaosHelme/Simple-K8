@@ -29,6 +29,17 @@ public class ApiServer(IStore store, ILogger<ApiServer> logger) : IApiServer
 		}
 	}
 
+	public void SetDesiredReplicaCount(int diffDesiredReplicas)
+	{
+		throw new NotImplementedException();
+	}
+
+	public int GetDesiredReplicaCount() => throw new NotImplementedException();
+	public void SetDesiredImage(string newImage)
+	{
+		throw new NotImplementedException();
+	}
+
 	public void UpdatePodStatus(string podId, PodStatus status)
 	{
 		store.Save($"pod_{podId}_{status}", status.ToString());

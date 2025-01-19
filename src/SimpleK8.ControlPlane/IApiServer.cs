@@ -8,4 +8,7 @@ public interface IApiServer
 	List<Deployment> GetDesiredDeployments();
 	List<Deployment> GetCurrentDeployments();
 	void ApplyDeploymentDifferences(List<DeploymentDifference> diff);
+	void SetDesiredReplicaCount(int diffDesiredReplicas);
+	int GetDesiredReplicaCount();
+	void SetDesiredImage(string newImage);
 }
