@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace SimpleK8.Core;
 
@@ -9,19 +10,21 @@ public class Pod
 
 	public bool HasFailedContainers => Containers.Any(c => c.Status == ContainerStatus.Failed);
 	public List<Container> Containers { get; }
+	public string? AssignedNode { get; set; }
 
 	readonly ILogger<Pod> _logger;
 	
-	public Pod(List<Container> containers, ILogger<Pod> logger)
+	public Pod(string image, ILogger<Pod> logger, IServiceProvider serviceProvider)
 	{
 		Id = Guid.NewGuid().ToString();
-		Containers = containers;
+		Containers = [new Container(image, serviceProvider.GetRequiredService<ILogger<Container>>())];
 		_logger = logger;
+		Status = PodStatus.Pending;
 	}
 	
-	public async Task Create()
+	public async Task Start()
 	{
-		_logger.LogInformation($"Creating pod {Id}");
+		_logger.LogInformation("Starting pod {Id}", Id);
 		foreach (var container in Containers)
 		{
 			await container.Start();
@@ -38,7 +41,14 @@ public class Pod
 		}
 	}
 
-	public void Delete()
+	public void SimulateFailure()
+	{
+		Containers.First().SimulateFailure();
+		Status = PodStatus.Failed;
+		_logger.LogInformation("Pod {Id} has failed!", Id);
+	}
+
+	public void Stop()
 	{
 		_logger.LogInformation($"Deleting pod {Id}");
 		foreach (var container in Containers)
