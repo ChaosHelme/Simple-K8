@@ -13,4 +13,5 @@ public class PersistentClusterStore(ILogger<PersistentClusterStore> logger) : IS
 	}
 	
 	public string? Get(string key) => _store.GetValueOrDefault(key);
+	public bool Delete(string key) => _store.Remove(key);
 }

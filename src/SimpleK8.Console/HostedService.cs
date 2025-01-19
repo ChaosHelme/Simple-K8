@@ -28,8 +28,6 @@ public class HostedService(
 				try
 				{
 					var cluster = new KubernetesCluster(
-						apiServer, 
-						store,
 						controllerManager, 
 						scheduler, 
 						serviceProvider.GetRequiredService<ILogger<KubernetesCluster>>(),

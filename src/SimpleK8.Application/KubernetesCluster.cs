@@ -7,8 +7,6 @@ using SimpleK8.Worker;
 namespace SimpleK8.Cluster;
 
 public class KubernetesCluster(
-	IApiServer apiServer,
-	IStore store,
 	IControllerManager controllerManager,
 	IScheduler scheduler,
 	ILogger<KubernetesCluster> logger,
@@ -30,8 +28,6 @@ public class KubernetesCluster(
 		
 		while (!token.IsCancellationRequested)
 		{
-			apiServer.HandleRequest("Sample request");
-			store.Save("config", "cluster_config");
 			controllerManager.ManageControllers(token);
 			
 			await CreatePod("myapp:v1");

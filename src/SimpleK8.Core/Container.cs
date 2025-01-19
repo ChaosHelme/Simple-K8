@@ -5,7 +5,6 @@ namespace SimpleK8.Core;
 public class Container(string image, ILogger<Container> logger)
 {
 	public string Id { get; } = Guid.NewGuid().ToString();
-	public string Image { get; set; } = image;
 	public ContainerStatus Status { get; private set; } = ContainerStatus.Created;
 
 	public async Task Start()

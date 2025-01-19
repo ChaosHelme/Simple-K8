@@ -2,6 +2,8 @@
 using Microsoft.Extensions.Logging;
 using SimpleK8.ControlPlane.Controllers;
 using SimpleK8.ControlPlane.Controllers.Deployment;
+using SimpleK8.ControlPlane.Replica;
+using SimpleK8.ControlPlane.Stateful;
 
 namespace SimpleK8.ControlPlane;
 

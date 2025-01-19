@@ -4,4 +4,5 @@ public interface IStore
 {
 	public void Save(string key, string value);
 	public string? Get(string key);
+	public bool Delete(string key);
 }

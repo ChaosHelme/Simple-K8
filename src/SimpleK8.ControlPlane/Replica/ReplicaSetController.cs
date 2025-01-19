@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SimpleK8.ControlPlane.Controllers;
 using SimpleK8.Core;
 
-namespace SimpleK8.ControlPlane.Controllers;
+namespace SimpleK8.ControlPlane.Replica;
 
 public class ReplicaSetController(
 	IApiServer apiServer,

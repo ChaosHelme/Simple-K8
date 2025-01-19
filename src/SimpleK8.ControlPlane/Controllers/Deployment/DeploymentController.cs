@@ -79,7 +79,7 @@ public class DeploymentController(
     void CreateDeployment(Core.Deployment deployment, CancellationToken cancellationToken)
     {
         logger.LogInformation("Creating new deployment: {DeploymentName}", deployment.Name);
-        apiServer.CreateReplicaSet(deployment.Name, deployment.Image, deployment.ReplicaCount);
+        apiServer.SetReplicaSet(deployment.Name, deployment.ReplicaCount);
         _deploymentStatuses[deployment.Name] = new DeploymentStatus { State = DeploymentState.Progressing };
         _revisionHistories[deployment.Name] = new List<RevisionHistory> { new(deployment) };
         UpdateDeploymentStatus(deployment.Name, cancellationToken);
@@ -111,10 +111,10 @@ public class DeploymentController(
         // Gradually scale up new ReplicaSet while scaling down the old one
         for (var i = 1; i <= desiredReplicas; i++)
         {
-            apiServer.ScaleReplicaSet(desiredDeployment.Name, i);
+            apiServer.SetReplicaSet(desiredDeployment.Name, i);
             if (currentReplicas > desiredReplicas - i)
             {
-                apiServer.ScaleReplicaSet(currentDeployment.Name, desiredReplicas - i);
+                apiServer.SetReplicaSet(currentDeployment.Name, desiredReplicas - i);
             }
             await Task.Delay(1000, cancellationToken); // Simulate delay between updates
         }
