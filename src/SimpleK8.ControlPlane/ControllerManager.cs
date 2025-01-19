@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using SimpleK8.ControlPlane.Controllers;
+using SimpleK8.ControlPlane.Controllers.Deployment;
 
 namespace SimpleK8.ControlPlane;
 
@@ -9,7 +10,7 @@ public class ControllerManager(IApiServer apiServer, ILogger<ControllerManager> 
 	readonly List<IController> _controllers = [
 		new DeploymentController(apiServer, serviceProvider.GetRequiredService<ILogger<DeploymentController>>()),
 		new StatefulSetController(apiServer, serviceProvider.GetRequiredService<ILogger<StatefulSetController>>()),
-		new ReplicaSetController(apiServer, "myapp:v1", 3, serviceProvider.GetRequiredService<ILogger<ReplicaSetController>>(), serviceProvider)
+		new ReplicaSetController(apiServer, "myapp:v1", serviceProvider.GetRequiredService<ILogger<ReplicaSetController>>(), serviceProvider)
 	];
 
 	public void StartControllers(CancellationToken cancellationToken)

@@ -1,4 +1,6 @@
-﻿using SimpleK8.Core;
+﻿using SimpleK8.ControlPlane.Controllers;
+using SimpleK8.ControlPlane.Controllers.Deployment;
+using SimpleK8.Core;
 
 namespace SimpleK8.ControlPlane;
 
@@ -11,4 +13,10 @@ public interface IApiServer
 	void SetDesiredReplicaCount(int diffDesiredReplicas);
 	int GetDesiredReplicaCount();
 	void SetDesiredImage(string newImage);
+	void CreateReplicaSet(string deploymentName, string deploymentImage, int deploymentReplicaCount);
+	void DeleteReplicaSet(string deploymentName);
+	int GetReplicaCount(string currentDeploymentName);
+	void ScaleReplicaSet(string desiredDeploymentName, int p1);
+	void UpdateDeploymentStatus(string deploymentName, DeploymentStatus status);
+	void UpdateDeployment(Deployment rollbackDeployment);
 }

@@ -6,18 +6,17 @@ namespace SimpleK8.ControlPlane.Controllers;
 
 public class ReplicaSetController(
 	IApiServer apiServer,
-	string initialImage, 
-	int initialReplicas,
+	string initialImage,
 	ILogger<ReplicaSetController> logger,
 	IServiceProvider serviceProvider) : IController
 {
 	public List<Pod> ManagedPods { get; private set; } = [];
 	
 	string _currentImage = initialImage;
-	int _desiredReplicas = initialReplicas;
 	
 	public async Task Run(CancellationToken cancellationToken)
 	{
+		logger.LogInformation("ReplicaSet controller watching for changes...");
 		while (!cancellationToken.IsCancellationRequested)
 		{
 			await Reconcile(cancellationToken);
@@ -25,13 +24,14 @@ public class ReplicaSetController(
 		}
 	}
 	
-	private async Task Reconcile(CancellationToken cancellationToken)
+	async Task Reconcile(CancellationToken cancellationToken)
 	{
 		var desiredReplicas = apiServer.GetDesiredReplicaCount();
 		var currentReplicas = ManagedPods.Count;
 
 		if (desiredReplicas != currentReplicas)
 		{
+			logger.LogInformation("Scaling replicas from {currentReplicas} to {desiredReplicas}", currentReplicas, desiredReplicas);
 			await ScaleTo(desiredReplicas, cancellationToken);
 		}
 

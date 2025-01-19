@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using SimpleK8.ControlPlane.Controllers;
+using SimpleK8.ControlPlane.Controllers.Deployment;
 using SimpleK8.Core;
 
 namespace SimpleK8.ControlPlane;
@@ -29,13 +31,37 @@ public class ApiServer(IStore store, ILogger<ApiServer> logger) : IApiServer
 		}
 	}
 
+	int _desiredReplicaCount = 3;
 	public void SetDesiredReplicaCount(int diffDesiredReplicas)
+	{
+		_desiredReplicaCount = diffDesiredReplicas;
+	}
+
+	public int GetDesiredReplicaCount() => _desiredReplicaCount;
+	public void SetDesiredImage(string newImage)
 	{
 		throw new NotImplementedException();
 	}
 
-	public int GetDesiredReplicaCount() => throw new NotImplementedException();
-	public void SetDesiredImage(string newImage)
+	public void CreateReplicaSet(string deploymentName, string deploymentImage, int deploymentReplicaCount)
+	{
+		throw new NotImplementedException();
+	}
+	public void DeleteReplicaSet(string deploymentName)
+	{
+		throw new NotImplementedException();
+	}
+	public int GetReplicaCount(string currentDeploymentName) => throw new NotImplementedException();
+
+	public void ScaleReplicaSet(string desiredDeploymentName, int p1)
+	{
+		throw new NotImplementedException();
+	}
+	public void UpdateDeploymentStatus(string deploymentName, DeploymentStatus status)
+	{
+		throw new NotImplementedException();
+	}
+	public void UpdateDeployment(Deployment rollbackDeployment)
 	{
 		throw new NotImplementedException();
 	}
