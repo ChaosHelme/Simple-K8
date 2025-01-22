@@ -1,9 +1,7 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using SimpleK8.ControlPlane;
-using SimpleK8.Core;
 using SimpleK8.DataContracts;
 using SimpleK8.DataContracts.Dtos;
 
@@ -111,8 +109,21 @@ public class DeploymentsController(IStore store) : ControllerBase
 	/// <param name="deploymentName"></param>
 	/// <returns></returns>
 	[HttpDelete("namespaces/{namespaceName}/[controller]/{deploymentName}")]
-	public ActionResult<Deployment> DeleteDeploymentForNamespace(string namespaceName, string deploymentName)
+	public ActionResult DeleteDeploymentForNamespace(string namespaceName, string deploymentName)
 	{
-		return Ok(deploymentName);
+		store.Delete($"deployment_{namespaceName}_{deploymentName}");
+		return Ok();
+	}
+	
+	/// <summary>
+	/// Delete collection of Deployment
+	/// </summary>
+	/// <param name="namespaceName">object name and auth scope, such as for teams and projects</param>
+	/// <returns></returns>
+	[HttpDelete("namespaces/{namespaceName}/[controller]")]
+	public ActionResult DeleteDeploymentCollection(string namespaceName)
+	{
+		store.Delete($"deployment_{namespaceName}");
+		return Ok();
 	}
 }
