@@ -10,7 +10,7 @@ public class ApiServer : IApiServer, IDisposable
 {
 	readonly HttpClient _httpClient;
 	
-	const string ApiServerUrl = "http://localhost:5077/api/v1/";
+	const string ApiServerUrl = "http://localhost:5077/apis/app/v1/";
 
 	public ApiServer(IHttpClientFactory httpClientFactory,
 		ILogger<ApiServer> logger)
@@ -19,14 +19,14 @@ public class ApiServer : IApiServer, IDisposable
 		_httpClient.BaseAddress = new Uri(ApiServerUrl);
 	}
 	
-	public List<Deployment> GetDesiredDeployments()
+	public async Task<DeploymentList> GetDesiredDeployments()
 	{
-		return new List<Deployment>();
+		return await _httpClient.GetFromJsonAsync<DeploymentList>("deployments");
 	}
 
-	public async Task<List<Deployment>?> GetCurrentDeployments()
+	public async Task<DeploymentList?> GetCurrentDeployments()
 	{
-		var list = await _httpClient.GetFromJsonAsync<List<Deployment>>("deployments");
+		var list = await _httpClient.GetFromJsonAsync<DeploymentList>("deployments");
 		return list;
 	}
 	

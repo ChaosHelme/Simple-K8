@@ -5,7 +5,7 @@ using SimpleK8.ControlPlane;
 using SimpleK8.DataContracts;
 using SimpleK8.DataContracts.Dtos;
 
-namespace SimpleK8.Api.Controllers;
+namespace SimpleK8.Api.Controllers.Workload;
 
 [ApiController]
 [ApiVersion("1.0")]
@@ -19,7 +19,7 @@ public class DeploymentsController(IStore store) : ControllerBase
 	[HttpGet("[controller]")]
 	public ActionResult<DeploymentList> ListAllNamespaces()
 	{
-		var deployments = new DeploymentList("v1", new List<Deployment>(), "", null);
+		var deployments = new DeploymentList("v1", [], "", null);
 		return Ok(deployments);
 	}
 	
@@ -39,6 +39,18 @@ public class DeploymentsController(IStore store) : ControllerBase
 			return NotFound();
 		}
 		return Ok(deployment);
+	}
+	
+	/// <summary>
+	/// Read status of the specified Deployment
+	/// </summary>
+	/// <param name="namespaceName"></param>
+	/// <param name="deploymentName"></param>
+	/// <returns></returns>
+	[HttpGet("namespaces/{namespaceName}/[controller]/{deploymentName}/status")]
+	public ActionResult<Deployment> PatchStatus(string namespaceName, string deploymentName)
+	{
+		return Ok(store.Get($"deployment_{namespaceName}_{deploymentName}_status"));
 	}
 
 	/// <summary>

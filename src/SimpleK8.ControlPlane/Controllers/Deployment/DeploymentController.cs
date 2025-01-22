@@ -50,12 +50,12 @@ public class DeploymentController(
 
     async Task Reconcile(CancellationToken cancellationToken)
     {
-        var desiredDeployments = apiServer.GetDesiredDeployments();
+        var desiredDeployments = await apiServer.GetDesiredDeployments();
         var currentDeployments = await apiServer.GetCurrentDeployments();
 
-        foreach (var desiredDeployment in desiredDeployments)
+        foreach (var desiredDeployment in desiredDeployments.Items)
         {
-            var currentDeployment = currentDeployments.FirstOrDefault(d => d.Name == desiredDeployment.Name);
+            var currentDeployment = currentDeployments.Items.FirstOrDefault(d => d.Name == desiredDeployment.Name);
             if (currentDeployment == null)
             {
                 CreateDeployment(desiredDeployment, cancellationToken);
@@ -67,9 +67,9 @@ public class DeploymentController(
         }
 
         // Handle deletions
-        foreach (var currentDeployment in currentDeployments)
+        foreach (var currentDeployment in currentDeployments.Items)
         {
-            if (!desiredDeployments.Any(d => d.Name == currentDeployment.Name))
+            if (!desiredDeployments.Items.Any(d => d.Name == currentDeployment.Name))
             {
                 DeleteDeployment(currentDeployment, cancellationToken);
             }
