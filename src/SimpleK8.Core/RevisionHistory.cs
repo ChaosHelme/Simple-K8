@@ -4,7 +4,7 @@ namespace SimpleK8.Core;
 
 public class RevisionHistory(Deployment deployment)
 {
-	public string Image { get; } = deployment.Image;
-	public int ReplicaCount { get; } = deployment.ReplicaCount;
+	public string Image { get; } = "";
+	public int ReplicaCount { get; } = 0;
 	public DateTime Timestamp { get; } = DateTime.UtcNow;
 }

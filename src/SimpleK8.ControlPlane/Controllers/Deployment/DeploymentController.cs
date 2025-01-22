@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SimpleK8.Core;
+using SimpleK8.DataContracts;
 
 namespace SimpleK8.ControlPlane.Controllers.Deployment;
 
@@ -23,14 +24,14 @@ public class DeploymentController(
     
     public void PauseDeployment(string deploymentName)
     {
-        logger.LogInformation("Pausing deployment: {DeploymentName}", deploymentName);
-        _deploymentStatuses[deploymentName] = new DeploymentStatus { State = DeploymentState.Paused };
+        // logger.LogInformation("Pausing deployment: {DeploymentName}", deploymentName);
+        // _deploymentStatuses[deploymentName] = new DeploymentStatus { State = DeploymentState.Paused };
     }
 
     public void ResumeDeployment(string deploymentName)
     {
         logger.LogInformation("Resuming deployment: {DeploymentName}", deploymentName);
-        _deploymentStatuses[deploymentName] = new DeploymentStatus { State = DeploymentState.Progressing };
+        //_deploymentStatuses[deploymentName] = new DeploymentStatus { State = DeploymentState.Progressing };
     }
 
     public void RollbackDeployment(string deploymentName, int revisionNumber)
@@ -43,9 +44,9 @@ public class DeploymentController(
         }
 
         var targetRevision = revisionHistory[revisionNumber - 1];
-        var rollbackDeployment = new DataContracts.Deployment(Guid.NewGuid(), deploymentName, targetRevision.Image, targetRevision.ReplicaCount);
+        //var rollbackDeployment = new DataContracts.Deployment(Guid.NewGuid(), deploymentName, targetRevision.Image, targetRevision.ReplicaCount);
 
-        apiServer.UpdateDeployment(rollbackDeployment);
+        //apiServer.UpdateDeployment(rollbackDeployment);
     }
 
     async Task Reconcile(CancellationToken cancellationToken)
@@ -78,11 +79,11 @@ public class DeploymentController(
 
     void CreateDeployment(DataContracts.Deployment deployment, CancellationToken cancellationToken)
     {
-        logger.LogInformation("Creating new deployment: {DeploymentName}", deployment.Name);
-        apiServer.SetReplicaSet(deployment.Name, deployment.ReplicaCount);
-        _deploymentStatuses[deployment.Name] = new DeploymentStatus { State = DeploymentState.Progressing };
-        _revisionHistories[deployment.Name] = new List<RevisionHistory> { new(deployment) };
-        UpdateDeploymentStatus(deployment.Name, cancellationToken);
+        // logger.LogInformation("Creating new deployment: {DeploymentName}", deployment.Name);
+        // apiServer.SetReplicaSet(deployment.Name, deployment.ReplicaCount);
+        // _deploymentStatuses[deployment.Name] = new DeploymentStatus { State = DeploymentState.Progressing };
+        // _revisionHistories[deployment.Name] = new List<RevisionHistory> { new(deployment) };
+        // UpdateDeploymentStatus(deployment.Name, cancellationToken);
     }
 
     async Task UpdateDeployment(DataContracts.Deployment currentDeployment, DataContracts.Deployment desiredDeployment, CancellationToken cancellationToken)
@@ -103,23 +104,23 @@ public class DeploymentController(
 
     async Task PerformRollingUpdate(DataContracts.Deployment currentDeployment, DataContracts.Deployment desiredDeployment, CancellationToken cancellationToken)
     {
-        _deploymentStatuses[desiredDeployment.Name] = new DeploymentStatus { State = DeploymentState.Progressing };
-
-        var currentReplicas = apiServer.GetReplicaCount(currentDeployment.Name);
-        var desiredReplicas = desiredDeployment.ReplicaCount;
-
-        // Gradually scale up new ReplicaSet while scaling down the old one
-        for (var i = 1; i <= desiredReplicas; i++)
-        {
-            apiServer.SetReplicaSet(desiredDeployment.Name, i);
-            if (currentReplicas > desiredReplicas - i)
-            {
-                apiServer.SetReplicaSet(currentDeployment.Name, desiredReplicas - i);
-            }
-            await Task.Delay(1000, cancellationToken); // Simulate delay between updates
-        }
-
-        _deploymentStatuses[desiredDeployment.Name] = new DeploymentStatus { State = DeploymentState.Completed };
+        // _deploymentStatuses[desiredDeployment.Name] = new DeploymentStatus { State = DeploymentState.Progressing };
+        //
+        // var currentReplicas = apiServer.GetReplicaCount(currentDeployment.Name);
+        // var desiredReplicas = desiredDeployment.ReplicaCount;
+        //
+        // // Gradually scale up new ReplicaSet while scaling down the old one
+        // for (var i = 1; i <= desiredReplicas; i++)
+        // {
+        //     apiServer.SetReplicaSet(desiredDeployment.Name, i);
+        //     if (currentReplicas > desiredReplicas - i)
+        //     {
+        //         apiServer.SetReplicaSet(currentDeployment.Name, desiredReplicas - i);
+        //     }
+        //     await Task.Delay(1000, cancellationToken); // Simulate delay between updates
+        // }
+        //
+        // _deploymentStatuses[desiredDeployment.Name] = new DeploymentStatus { State = DeploymentState.Completed };
     }
 
     void UpdateDeploymentStatus(string deploymentName, CancellationToken cancellationToken)
@@ -130,6 +131,7 @@ public class DeploymentController(
 
     bool NeedsUpdate(DataContracts.Deployment current, DataContracts.Deployment desired)
     {
-        return current.Image != desired.Image || current.ReplicaCount != desired.ReplicaCount;
+        return true;
+        // return current.Image != desired.Image || current.ReplicaCount != desired.ReplicaCount;
     }
 }

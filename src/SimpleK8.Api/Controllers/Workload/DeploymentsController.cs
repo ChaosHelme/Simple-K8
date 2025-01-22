@@ -36,7 +36,7 @@ public class DeploymentsController(IStore store, IMediator mediator) : Controlle
 	[HttpGet("namespaces/{namespaceName}/[controller]/{deploymentName}")]
 	public ActionResult<Deployment> GetSpecifiedDeployment(string namespaceName, string deploymentName)
 	{
-		return Ok(mediator.Publish(new GetDeploymentQuery(deploymentName, namespaceName)));
+		return Ok(mediator.Send(new GetDeploymentQuery(deploymentName, namespaceName)));
 	}
 	
 	/// <summary>
@@ -83,7 +83,7 @@ public class DeploymentsController(IStore store, IMediator mediator) : Controlle
 	[HttpPatch("namespaces/{namespaceName}/[controller]/{deploymentName}")]
 	public ActionResult<Deployment> UpdateDeployment(string namespaceName, string deploymentName, [FromBody] DeploymentUpdateDto deploymentUpdate)
 	{
-		return Ok(mediator.Publish(new UpdateDeploymentCommand(namespaceName, deploymentName, deploymentUpdate)));
+		return Ok(mediator.Send(new UpdateDeploymentCommand(namespaceName, deploymentName, deploymentUpdate)));
 	}
 
 	/// <summary>

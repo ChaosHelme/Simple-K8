@@ -4,7 +4,9 @@ using dotnet_etcd.interfaces;
 using Serilog;
 using SimpleK8.Api.Configurations;
 using SimpleK8.Cluster;
+using SimpleK8.Cluster.Queries;
 using SimpleK8.ControlPlane;
+using SimpleK8.Infrastructure;
 
 namespace SimpleK8.Api.Extensions;
 
@@ -13,7 +15,8 @@ internal static class WebApplicationBuilderExtension {
 	{
 		builder.Services.AddMediatR(options =>
 		{
-			options.RegisterServicesFromAssembly(typeof(KubernetesCluster).Assembly);
+			options.AutoRegisterRequestProcessors = true;
+			options.RegisterServicesFromAssembly(typeof(GetDeploymentQuery).Assembly);
 		});
 		builder.Services.AddSerilog();
 		builder.Services.AddEndpointsApiExplorer();
@@ -30,6 +33,8 @@ internal static class WebApplicationBuilderExtension {
 		builder.Services.AddTransient<IStore, PersistentClusterStore>();
 		builder.Services.AddTransient<IEtcdClient, EtcdClient>(_ 
 			=> new EtcdClient(builder.Configuration.GetConnectionString("etcd")));
+		builder.Services.AddTransient<IDeploymentRepository, DeploymentRepository>();
+		
 		// builder.Services.AddTransient<IDbConnectionFactory, NpgsqlServerConnectionFactory>();
 		// builder.Services
 		// 	.AddScoped<TransactionalDbConnectionProvider>()
