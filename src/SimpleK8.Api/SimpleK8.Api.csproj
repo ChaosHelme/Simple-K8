@@ -14,6 +14,8 @@
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Mvc" Version="8.1.0" />
         <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="8.1.0" />
+        <PackageReference Include="dotnet-etcd" Version="7.2.0" />
+        <PackageReference Include="MediatR" Version="12.4.1" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.0"/>
         <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
         <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
@@ -23,6 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\SimpleK8.Application\SimpleK8.Application.csproj" />
       <ProjectReference Include="..\SimpleK8.ControlPlane\SimpleK8.ControlPlane.csproj" />
       <ProjectReference Include="..\SimpleK8.Core\SimpleK8.Core.csproj" />
     </ItemGroup>

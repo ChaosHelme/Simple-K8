@@ -1,6 +1,9 @@
 using System.Text.Json;
 using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using SimpleK8.Cluster.Commands;
+using SimpleK8.Cluster.Queries;
 using SimpleK8.ControlPlane;
 using SimpleK8.DataContracts;
 using SimpleK8.DataContracts.Dtos;
@@ -10,7 +13,7 @@ namespace SimpleK8.Api.Controllers.Workload;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("/apis/app/v{version:apiVersion}")]
-public class DeploymentsController(IStore store) : ControllerBase
+public class DeploymentsController(IStore store, IMediator mediator) : ControllerBase
 {
 	/// <summary>
 	/// List all namespaces
@@ -33,12 +36,7 @@ public class DeploymentsController(IStore store) : ControllerBase
 	[HttpGet("namespaces/{namespaceName}/[controller]/{deploymentName}")]
 	public ActionResult<Deployment> GetSpecifiedDeployment(string namespaceName, string deploymentName)
 	{
-		var deployment = store.Get($"deployment_{namespaceName}_{deploymentName}");
-		if (string.IsNullOrEmpty(deployment))
-		{
-			return NotFound();
-		}
-		return Ok(deployment);
+		return Ok(mediator.Publish(new GetDeploymentQuery(deploymentName, namespaceName)));
 	}
 	
 	/// <summary>
@@ -83,17 +81,9 @@ public class DeploymentsController(IStore store) : ControllerBase
 	/// <param name="deploymentUpdate"></param>
 	/// <returns></returns>
 	[HttpPatch("namespaces/{namespaceName}/[controller]/{deploymentName}")]
-	
 	public ActionResult<Deployment> UpdateDeployment(string namespaceName, string deploymentName, [FromBody] DeploymentUpdateDto deploymentUpdate)
 	{
-		var persistedDeployment = JsonSerializer.Deserialize<Deployment>(store.Get($"deployment_{namespaceName}_{deploymentName}") ?? string.Empty);
-		if (persistedDeployment is null)
-			return NotFound($"deployment {deploymentName} not found");
-		
-		var updatedDeployment = Deployment.CreateUpdate(persistedDeployment, deploymentUpdate);
-		store.Save($"deployment_{namespaceName}_{deploymentName}", JsonSerializer.Serialize(updatedDeployment));
-		
-		return Ok(persistedDeployment);
+		return Ok(mediator.Publish(new UpdateDeploymentCommand(namespaceName, deploymentName, deploymentUpdate)));
 	}
 
 	/// <summary>
