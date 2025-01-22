@@ -1,4 +1,6 @@
-﻿namespace SimpleK8.Core;
+﻿using SimpleK8.DataContracts;
+
+namespace SimpleK8.Core;
 
 public class RevisionHistory(Deployment deployment)
 {

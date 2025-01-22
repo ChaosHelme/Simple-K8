@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.OpenApi.Models;
 
 namespace SimpleK8.Api.Configurations;
@@ -15,6 +16,9 @@ internal static class SwaggerConfiguration {
 				BearerFormat = "JWT",
 				Scheme = "Bearer"
 			});
+			var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+			var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+			o.IncludeXmlComments(xmlPath);
 			o.AddSecurityRequirement(new OpenApiSecurityRequirement {
 				{
 					new OpenApiSecurityScheme {

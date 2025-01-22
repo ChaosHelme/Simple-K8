@@ -1,5 +1,6 @@
 ﻿using SimpleK8.ControlPlane.Controllers.Deployment;
 using SimpleK8.Core;
+using SimpleK8.DataContracts;
 
 namespace SimpleK8.ControlPlane;
 

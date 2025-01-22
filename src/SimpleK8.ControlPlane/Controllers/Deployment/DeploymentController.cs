@@ -43,7 +43,7 @@ public class DeploymentController(
         }
 
         var targetRevision = revisionHistory[revisionNumber - 1];
-        var rollbackDeployment = new Core.Deployment(Guid.NewGuid(), deploymentName, targetRevision.Image, targetRevision.ReplicaCount);
+        var rollbackDeployment = new DataContracts.Deployment(Guid.NewGuid(), deploymentName, targetRevision.Image, targetRevision.ReplicaCount);
 
         apiServer.UpdateDeployment(rollbackDeployment);
     }
@@ -76,7 +76,7 @@ public class DeploymentController(
         }
     }
 
-    void CreateDeployment(Core.Deployment deployment, CancellationToken cancellationToken)
+    void CreateDeployment(DataContracts.Deployment deployment, CancellationToken cancellationToken)
     {
         logger.LogInformation("Creating new deployment: {DeploymentName}", deployment.Name);
         apiServer.SetReplicaSet(deployment.Name, deployment.ReplicaCount);
@@ -85,7 +85,7 @@ public class DeploymentController(
         UpdateDeploymentStatus(deployment.Name, cancellationToken);
     }
 
-    async Task UpdateDeployment(Core.Deployment currentDeployment, Core.Deployment desiredDeployment, CancellationToken cancellationToken)
+    async Task UpdateDeployment(DataContracts.Deployment currentDeployment, DataContracts.Deployment desiredDeployment, CancellationToken cancellationToken)
     {
         logger.LogInformation("Updating deployment: {DeploymentName}", desiredDeployment.Name);
         await PerformRollingUpdate(currentDeployment, desiredDeployment, cancellationToken);
@@ -93,7 +93,7 @@ public class DeploymentController(
         UpdateDeploymentStatus(desiredDeployment.Name, cancellationToken);
     }
 
-    void DeleteDeployment(Core.Deployment deployment, CancellationToken cancellationToken)
+    void DeleteDeployment(DataContracts.Deployment deployment, CancellationToken cancellationToken)
     {
         logger.LogInformation("Deleting deployment: {DeploymentName}", deployment.Name);
         apiServer.DeleteReplicaSet(deployment.Name);
@@ -101,7 +101,7 @@ public class DeploymentController(
         _revisionHistories.Remove(deployment.Name);
     }
 
-    async Task PerformRollingUpdate(Core.Deployment currentDeployment, Core.Deployment desiredDeployment, CancellationToken cancellationToken)
+    async Task PerformRollingUpdate(DataContracts.Deployment currentDeployment, DataContracts.Deployment desiredDeployment, CancellationToken cancellationToken)
     {
         _deploymentStatuses[desiredDeployment.Name] = new DeploymentStatus { State = DeploymentState.Progressing };
 
@@ -128,7 +128,7 @@ public class DeploymentController(
         apiServer.UpdateDeploymentStatus(deploymentName, status);
     }
 
-    bool NeedsUpdate(Core.Deployment current, Core.Deployment desired)
+    bool NeedsUpdate(DataContracts.Deployment current, DataContracts.Deployment desired)
     {
         return current.Image != desired.Image || current.ReplicaCount != desired.ReplicaCount;
     }
