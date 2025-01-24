@@ -27,9 +27,9 @@ public class DeploymentsController(IStore store, IMediator mediator) : Controlle
 	}
 	
 	[HttpGet("namespaces/{namespaceName}/[controller]")]
-	public ActionResult<DeploymentList?> ListDeployments(string namespaceName)
+	public async Task<ActionResult<DeploymentList?>> ListDeployments(string namespaceName)
 	{
-		var deployment = JsonSerializer.Deserialize<DeploymentList>(store.Get($"deployment_{namespaceName}") ?? string.Empty);
+		var deployment = await mediator.Send(new ListDeploymentsQuery(namespaceName));
 		return Ok(deployment);
 	}
 
