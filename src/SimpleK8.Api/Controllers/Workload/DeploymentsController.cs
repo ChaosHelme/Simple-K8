@@ -63,14 +63,11 @@ public class DeploymentsController(IStore store, IMediator mediator) : Controlle
 	///     Valid values are: - All: all dry run stages will be processed</param>
 	/// <returns>201 with created <see cref="Deployment"/></returns>
 	[HttpPost("namespaces/{namespaceName}/[controller]")]
-	public ActionResult<Deployment> CreateDeployment(string namespaceName, [FromBody] Deployment deployment, 
+	public async Task<ActionResult<Deployment>> CreateDeployment(string namespaceName, [FromBody] Deployment deployment, 
 		[FromQuery] bool pretty = false ,[FromQuery] bool dryRun = false)
 	{
-		if (dryRun)
-		{
-			store.Save($"deployment_{namespaceName}_{deployment.Name}", JsonSerializer.Serialize(deployment));	
-		}
-		return Created($"namespaces/{namespaceName}/deployments/{deployment.Name}", deployment);
+		var result = await mediator.Send(new CreateDeploymentCommand(namespaceName, deployment.Name, deployment));
+		return result ? Created($"namespaces/{namespaceName}/deployments/{deployment.Name}", deployment) : NotFound();
 	}
 
 	/// <summary>
