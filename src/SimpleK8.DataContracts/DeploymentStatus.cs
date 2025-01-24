@@ -1,7 +1,7 @@
 namespace SimpleK8.DataContracts;
 
 /// <summary>
-/// This is defined by the user and describes the desired state of system. Fill this in when creating or updating an object.
+/// This is filled in by the server and reports the current state of the system. In most cases, users don't need to change this.
 /// </summary>
 /// <param name="AvailableReplicas"></param>
 /// <param name="CollisionCount"></param>
