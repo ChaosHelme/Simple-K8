@@ -1,11 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 using dotnet_etcd;
 using dotnet_etcd.interfaces;
+using Grpc.Core;
 using Serilog;
 using SimpleK8.Api.Configurations;
 using SimpleK8.Cluster;
 using SimpleK8.Cluster.Queries;
-using SimpleK8.ControlPlane;
 using SimpleK8.Infrastructure;
 
 namespace SimpleK8.Api.Extensions;
@@ -29,10 +29,10 @@ internal static class WebApplicationBuilderExtension {
 		builder.Services.AddAuthorization();
 
 		builder.Services.AddHealthChecks();
-
-		builder.Services.AddTransient<IStore, PersistentClusterStore>();
-		builder.Services.AddTransient<IEtcdClient, EtcdClient>(_ 
-			=> new EtcdClient(builder.Configuration.GetConnectionString("etcd")));
+		
+		builder.Services.AddTransient<IEtcdClient, EtcdClient>(_
+			=> new EtcdClient(builder.Configuration.GetConnectionString("etcd"),
+				configureChannelOptions: options => options.Credentials = ChannelCredentials.Insecure));
 		builder.Services.AddTransient<IDeploymentRepository, DeploymentRepository>();
 		
 		// builder.Services.AddTransient<IDbConnectionFactory, NpgsqlServerConnectionFactory>();

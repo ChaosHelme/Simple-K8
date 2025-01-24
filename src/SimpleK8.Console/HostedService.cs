@@ -1,18 +1,12 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using SimpleK8.Cluster;
-using SimpleK8.ControlPlane;
 
 namespace SimpleK8.Console;
 
 public class HostedService(
 	ILogger<HostedService> logger,
 	IHostApplicationLifetime appLifetime,
-	IApiServer apiServer,
-	IStore store,
-	IControllerManager controllerManager,
-	IScheduler scheduler,
 	IServiceProvider serviceProvider) : IHostedService
 {
 	int? _exitCode;
@@ -27,10 +21,8 @@ public class HostedService(
 			{
 				try
 				{
-					var cluster = new KubernetesCluster(
-						controllerManager, 
-						scheduler, 
-						serviceProvider.GetRequiredService<ILogger<KubernetesCluster>>(),
+					var cluster = new KubernetesClusterSimulator(
+						serviceProvider.GetRequiredService<ILogger<KubernetesClusterSimulator>>(),
 						serviceProvider);
 					
 					cluster.AddWorkerNode("worker-1");

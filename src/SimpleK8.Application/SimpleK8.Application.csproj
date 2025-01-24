@@ -8,7 +8,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SimpleK8.ControlPlane\SimpleK8.ControlPlane.csproj" />
       <ProjectReference Include="..\SimpleK8.Core\SimpleK8.Core.csproj" />
       <ProjectReference Include="..\SimpleK8.Worker\SimpleK8.Worker.csproj" />
     </ItemGroup>

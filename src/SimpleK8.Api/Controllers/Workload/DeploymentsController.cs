@@ -1,10 +1,8 @@
-using System.Text.Json;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SimpleK8.Cluster.Commands;
 using SimpleK8.Cluster.Queries;
-using SimpleK8.ControlPlane;
 using SimpleK8.DataContracts;
 using SimpleK8.DataContracts.Dtos;
 
@@ -13,17 +11,17 @@ namespace SimpleK8.Api.Controllers.Workload;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("/apis/app/v{version:apiVersion}")]
-public class DeploymentsController(IStore store, IMediator mediator) : ControllerBase
+public class DeploymentsController(IMediator mediator) : ControllerBase
 {
 	/// <summary>
 	/// List all namespaces
 	/// </summary>
 	/// <returns><see cref="DeploymentList"/></returns>
 	[HttpGet("[controller]")]
-	public ActionResult<DeploymentList> ListAllNamespaces()
+	public async Task<ActionResult<DeploymentList>> ListAllNamespaces()
 	{
-		var deployments = new DeploymentList("v1", [], "", null);
-		return Ok(deployments);
+		var result = await mediator.Send(new ListDeploymentNamespacesQuery());
+		return Ok(result);
 	}
 	
 	[HttpGet("namespaces/{namespaceName}/[controller]")]
@@ -46,9 +44,9 @@ public class DeploymentsController(IStore store, IMediator mediator) : Controlle
 	/// <param name="deploymentName"></param>
 	/// <returns></returns>
 	[HttpGet("namespaces/{namespaceName}/[controller]/{deploymentName}/status")]
-	public ActionResult<Deployment> PatchStatus(string namespaceName, string deploymentName)
+	public async Task<ActionResult<Deployment>> PatchStatus(string namespaceName, string deploymentName)
 	{
-		return Ok(store.Get($"deployment_{namespaceName}_{deploymentName}_status"));
+		return Ok(mediator.Send(new UpdateDeploymentStatusCommand(namespaceName, deploymentName)));
 	}
 
 	/// <summary>
@@ -66,8 +64,8 @@ public class DeploymentsController(IStore store, IMediator mediator) : Controlle
 	public async Task<ActionResult<Deployment>> CreateDeployment(string namespaceName, [FromBody] Deployment deployment, 
 		[FromQuery] bool pretty = false ,[FromQuery] bool dryRun = false)
 	{
-		var result = await mediator.Send(new CreateDeploymentCommand(namespaceName, deployment.Name, deployment));
-		return result ? Created($"namespaces/{namespaceName}/deployments/{deployment.Name}", deployment) : NotFound();
+		var result = await mediator.Send(new CreateDeploymentCommand(namespaceName, deployment.Metadata.Name, deployment));
+		return result ? Created($"namespaces/{namespaceName}/deployments/{deployment.Metadata.Name}", deployment) : NotFound();
 	}
 
 	/// <summary>
@@ -91,14 +89,10 @@ public class DeploymentsController(IStore store, IMediator mediator) : Controlle
 	/// <param name="deployment"></param>
 	/// <returns></returns>
 	[HttpPut("namespaces/{namespaceName}/[controller]/{deploymentName}")]
-	public ActionResult<Deployment> ReplaceDeployment(string namespaceName, string deploymentName, [FromBody] Deployment deployment)
+	public async Task<ActionResult<Deployment>> ReplaceDeployment(string namespaceName, string deploymentName, [FromBody] Deployment deployment)
 	{
-		var persistedDeployment = JsonSerializer.Deserialize<Deployment>(store.Get($"deployment_{namespaceName}_{deploymentName}") ?? string.Empty);
-		if (persistedDeployment is null )
-			return NotFound($"deployment {deploymentName} not found");
-
-		store.Save($"deployment_{namespaceName}_{deploymentName}", JsonSerializer.Serialize(deployment));
-		return Ok(deployment);
+		var response = await mediator.Send(new ReplaceDeploymentCommand(namespaceName, deploymentName, deployment));
+		return response == null ? NotFound() : Ok(response);
 	}
 
 	/// <summary>
@@ -108,10 +102,10 @@ public class DeploymentsController(IStore store, IMediator mediator) : Controlle
 	/// <param name="deploymentName"></param>
 	/// <returns></returns>
 	[HttpDelete("namespaces/{namespaceName}/[controller]/{deploymentName}")]
-	public ActionResult DeleteDeploymentForNamespace(string namespaceName, string deploymentName)
+	public async Task<ActionResult> DeleteSpecificDeployment(string namespaceName, string deploymentName)
 	{
-		store.Delete($"deployment_{namespaceName}_{deploymentName}");
-		return Ok();
+		var response = await mediator.Send(new DeleteDeploymentCommand(namespaceName, deploymentName));
+		return response ? Ok() : BadRequest();
 	}
 	
 	/// <summary>
@@ -120,9 +114,9 @@ public class DeploymentsController(IStore store, IMediator mediator) : Controlle
 	/// <param name="namespaceName">object name and auth scope, such as for teams and projects</param>
 	/// <returns></returns>
 	[HttpDelete("namespaces/{namespaceName}/[controller]")]
-	public ActionResult DeleteDeploymentCollection(string namespaceName)
+	public async Task<ActionResult> DeleteDeploymentCollection(string namespaceName)
 	{
-		store.Delete($"deployment_{namespaceName}");
-		return Ok();
+		var response = await mediator.Send(new DeleteDeploymentCollectionCommand(namespaceName));
+		return response ? Ok() : BadRequest();
 	}
 }

@@ -1,7 +1,6 @@
-using System.Text.Json;
 using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SimpleK8.ControlPlane;
 using SimpleK8.DataContracts;
 
 namespace SimpleK8.Api.Controllers;
@@ -9,7 +8,7 @@ namespace SimpleK8.Api.Controllers;
 [ApiController]
 [ApiVersion("1.0")]
 [Route("/apis/app/v{version:apiVersion}")]
-public class ServicesController(IStore store) : ControllerBase
+public class ServicesController(IMediator mediator) : ControllerBase
 {
 	/// <summary>
 	/// Read the specified Service
@@ -20,7 +19,8 @@ public class ServicesController(IStore store) : ControllerBase
 	[HttpGet("namespaces/{namespaceName}/[controller]/{serviceName}")]
 	public ActionResult<Service?> GetService(string namespaceName, string serviceName)
 	{
-		return JsonSerializer.Deserialize<Service>(store.Get($"services_{namespaceName}_{serviceName}") ?? string.Empty);
+		return Ok();
+		//return JsonSerializer.Deserialize<Service>(store.Get($"services_{namespaceName}_{serviceName}") ?? string.Empty);
 	}
 
 	/// <summary>
@@ -32,6 +32,7 @@ public class ServicesController(IStore store) : ControllerBase
 	[HttpGet("namespaces/{namespaceName}/[controller]")]
 	public ActionResult<Service?> GetServices(string namespaceName, [FromQuery] bool pretty = false)
 	{
-		return JsonSerializer.Deserialize<Service>(store.Get($"services_{namespaceName}") ?? string.Empty);
+		return Ok();
+		//return JsonSerializer.Deserialize<Service>(store.Get($"services_{namespaceName}") ?? string.Empty);
 	}
 }
