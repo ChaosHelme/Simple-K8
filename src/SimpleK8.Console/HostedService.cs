@@ -25,6 +25,8 @@ public class HostedService(
 						serviceProvider.GetRequiredService<ILogger<KubernetesClusterSimulator>>(),
 						serviceProvider);
 					
+					cluster.Init();	
+					
 					cluster.AddWorkerNode("worker-1");
 					cluster.AddWorkerNode("worker-2");
 

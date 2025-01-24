@@ -1,4 +1,3 @@
-using System.Text.Json;
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
