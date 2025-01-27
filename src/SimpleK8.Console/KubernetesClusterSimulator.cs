@@ -19,6 +19,8 @@ public class KubernetesClusterSimulator(
 
 	public void Init()
 	{
+		logger.LogInformation("Initializing Kubernetes cluster");
+		
 		_apiServerClient = new HttpClient();
 		_apiServerClient.BaseAddress = new Uri("http://localhost:5077/apis/app/v1/");
 		_initialized = true;
@@ -30,21 +32,28 @@ public class KubernetesClusterSimulator(
 		logger.LogInformation("Added worker node: {nodeName}", nodeName);
 	}
 	
-	public async Task RunCluster(CancellationToken token)
+	public async Task RunClusterAsync(CancellationToken token)
 	{
+		logger.LogInformation("Starting cluster simulation");
 		if (!_initialized)
 		{
 			Init();
 		}
 
-		var deploymentCollections = await GetDeploymentCollections(token);
-		while (deploymentCollections is null || deploymentCollections.Items.Count <= 0)
+		var deploymentList = DeploymentList.Empty;
+		while (deploymentList is null || deploymentList.Items.Count <= 0 || token.IsCancellationRequested)
 		{
-			deploymentCollections = await GetDeploymentCollections(token);
+			logger.LogInformation("Fetching deployment list...");
+			deploymentList = await GetDeploymentCollections(token);
+			if (deploymentList is not null && deploymentList.Items.Count > 0)
+			{
+				break;
+			}
 			await Task.Delay(_waitTimeSpan, token);
 		}
 		
-		foreach (var deployment in deploymentCollections.Items)
+		logger.LogInformation("Received {count} deployment items", deploymentList.Items.Count);
+		foreach (var deployment in deploymentList.Items)
 		{
 			// ToDo...
 		}

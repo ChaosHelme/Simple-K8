@@ -14,38 +14,45 @@ public class HostedService(
 	public Task StartAsync(CancellationToken cancellationToken)
 	{
 		logger.LogDebug("Starting with arguments: {arguments}", string.Join(" ", Environment.GetCommandLineArgs()));
-		
+
 		appLifetime.ApplicationStarted.Register(() =>
 		{
-			Task.Run(async () =>
+			var cluster = new KubernetesClusterSimulator(serviceProvider.GetRequiredService<ILogger<KubernetesClusterSimulator>>(),
+				serviceProvider);
+
+			var deploymentSimulator = new DeploymentSimulator(serviceProvider.GetRequiredService<ILogger<DeploymentSimulator>>());
+
+			cluster.Init();
+			deploymentSimulator.Init();
+
+			var clusterTask = cluster.RunClusterAsync(cancellationToken);
+			var deploymentSimulatorTask = deploymentSimulator.StartAsync(cancellationToken);
+
+			try
 			{
-				try
+				Task.WaitAll([clusterTask, deploymentSimulatorTask], cancellationToken);
+				logger.LogInformation($"Simulation completed");
+
+				_exitCode = 0;
+			} catch (OperationCanceledException ex)
+			{
+				logger.LogInformation("Operation cancelled!");
+				_exitCode = 0;
+			} catch (AggregateException aggEx)
+			{
+				if (aggEx.InnerExceptions.Any(ex => ex is OperationCanceledException))
 				{
-					var cluster = new KubernetesClusterSimulator(
-						serviceProvider.GetRequiredService<ILogger<KubernetesClusterSimulator>>(),
-						serviceProvider);
-					
-					cluster.Init();	
-					
-					cluster.AddWorkerNode("worker-1");
-					cluster.AddWorkerNode("worker-2");
-
-					await cluster.RunCluster(cancellationToken);
-
-					logger.LogInformation($"Simulation completed");
-
+					logger.LogInformation("Operation cancelled!");
 					_exitCode = 0;
-				}
-				catch (Exception ex)
+				} else
 				{
-					logger.LogError(ex, "Unhandled exception!");
+					logger.LogError(aggEx, "An unexpected error occured!");
 					_exitCode = 1;
 				}
-				finally
-				{
-					appLifetime.StopApplication();
-				}
-			}, cancellationToken);
+			} finally
+			{
+				appLifetime.StopApplication();
+			}
 		});
 
 		return Task.CompletedTask;
