@@ -72,7 +72,7 @@ public class DeploymentRepository(IEtcdClient etcdClient, ILogger<DeploymentRepo
 
 	public async Task<bool> DeleteDeploymentCollection(string requestNamespaceName, CancellationToken cancellationToken)
 	{
-		var response = await etcdClient.DeleteAsync($"deployments/{requestNamespaceName}/", cancellationToken: cancellationToken);
+		var response = await etcdClient.DeleteRangeAsync($"deployments/{requestNamespaceName}/", cancellationToken: cancellationToken);
 		return response.Deleted > 0;
 	}
 
