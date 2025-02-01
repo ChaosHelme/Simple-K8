@@ -6,6 +6,6 @@ public class CreateDeploymentCommandHandler(IDeploymentRepository deploymentRepo
 {
 	public async Task<bool> Handle(CreateDeploymentCommand request, CancellationToken cancellationToken)
 	{
-		return await deploymentRepository.CreateDeployment(request.NamespaceName, request.DeploymentName, request.Deployment, cancellationToken);
+		return await deploymentRepository.CreateDeployment(request.Deployment, cancellationToken);
 	}
 }

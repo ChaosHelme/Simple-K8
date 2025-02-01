@@ -22,9 +22,9 @@ public class DeploymentRepository(IEtcdClient etcdClient, ILogger<DeploymentRepo
 		return BuildDeploymentList(value);
 	}
 
-	public async Task<bool> CreateDeployment(string namespaceName, string deploymentName, Deployment deployment, CancellationToken cancellationToken)
+	public async Task<bool> CreateDeployment(Deployment deployment, CancellationToken cancellationToken)
 	{
-		var response = await etcdClient.PutAsync($"deployments/{namespaceName}/{deploymentName}", 
+		var response = await etcdClient.PutAsync($"deployments/{deployment.Metadata.Namespace}/{deployment.Metadata.Name}", 
 			JsonSerializer.Serialize(deployment), cancellationToken: cancellationToken);
 		logger.LogInformation("Created deployment {deploymentName}", deployment.Metadata.Name);
 		logger.LogInformation("etcd information: {info}", response.Header.ToString());

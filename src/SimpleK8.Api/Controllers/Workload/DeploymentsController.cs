@@ -52,7 +52,6 @@ public class DeploymentsController(IMediator mediator) : ControllerBase
 	/// <summary>
 	/// Create a <see cref="Deployment"/>
 	/// </summary>
-	/// <param name="namespaceName">object name and auth scope, such as for teams and projects</param>
 	/// <param name="deployment"></param>
 	/// <param name="pretty">If 'true', then the output is pretty printed. Defaults to 'false'
 	/// unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).</param>
@@ -60,12 +59,12 @@ public class DeploymentsController(IMediator mediator) : ControllerBase
 	///     An invalid or unrecognized dryRun directive will result in an error response and no further processing of the request.
 	///     Valid values are: - All: all dry run stages will be processed</param>
 	/// <returns>201 with created <see cref="Deployment"/></returns>
-	[HttpPost("namespaces/{namespaceName}/[controller]")]
-	public async Task<ActionResult<Deployment>> CreateDeployment(string namespaceName, [FromBody] Deployment deployment, 
+	[HttpPost("[controller]")]
+	public async Task<ActionResult<Deployment>> CreateDeployment([FromBody] Deployment deployment, 
 		[FromQuery] bool pretty = false ,[FromQuery] bool dryRun = false)
 	{
-		var result = await mediator.Send(new CreateDeploymentCommand(namespaceName, deployment.Metadata.Name, deployment));
-		return result ? Created($"namespaces/{namespaceName}/deployments/{deployment.Metadata.Name}", deployment) : NotFound();
+		var result = await mediator.Send(new CreateDeploymentCommand(deployment));
+		return result ? Created($"namespaces/{deployment.Metadata.Namespace}/deployments/{deployment.Metadata.Name}", deployment) : NotFound();
 	}
 
 	/// <summary>

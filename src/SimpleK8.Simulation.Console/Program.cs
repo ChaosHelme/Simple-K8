@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Polly;
 using Serilog;
 using Serilog.Debugging;
-using SimpleK8.Console;
+using SimpleK8.Simulation.Console;
 using SimpleK8.Core;
 
 var loggerConfig = new ConfigurationBuilder()

@@ -2,7 +2,7 @@ using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using SimpleK8.DataContracts;
 
-namespace SimpleK8.Console;
+namespace SimpleK8.Simulation.Console;
 
 public class DeploymentSimulator(
 	IHttpClientFactory httpClientFactory,

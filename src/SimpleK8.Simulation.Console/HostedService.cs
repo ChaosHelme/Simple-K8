@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace SimpleK8.Console;
+namespace SimpleK8.Simulation.Console;
 
 public class HostedService(
 	IHttpClientFactory httpClientFactory,

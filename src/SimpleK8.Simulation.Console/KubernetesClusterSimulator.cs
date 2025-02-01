@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using SimpleK8.DataContracts;
 using SimpleK8.Worker;
 
-namespace SimpleK8.Console;
+namespace SimpleK8.Simulation.Console;
 
 public class KubernetesClusterSimulator(
 	IHttpClientFactory httpClientFactory,
