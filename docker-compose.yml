@@ -25,6 +25,10 @@ services:
       - ConnectionStrings__etcd=http://etcd:2379
     networks:
       - simplek8
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
 volumes:
   etcd-data:
