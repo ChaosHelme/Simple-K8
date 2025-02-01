@@ -1,14 +1,13 @@
 ﻿using System.Net.Http.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Polly;
-using Polly.CircuitBreaker;
 using SimpleK8.DataContracts;
 using SimpleK8.Worker;
 
 namespace SimpleK8.Console;
 
 public class KubernetesClusterSimulator(
+	IHttpClientFactory httpClientFactory,
 	ILogger<KubernetesClusterSimulator> logger,
 	IServiceProvider serviceProvider) : IDisposable
 {
@@ -16,32 +15,17 @@ public class KubernetesClusterSimulator(
 
 	HttpClient? _apiServerClient;
 	bool _initialized;
-
-	readonly TimeSpan _waitTimeSpan = TimeSpan.FromSeconds(5);
-	AsyncPolicy<HttpResponseMessage> _resiliencePolicy;
-
+	DeploymentSimulator? _deploymentSimulator;
+	
 	public void Init()
 	{
 		logger.LogInformation("Initializing Kubernetes cluster");
 		
-		var circuitBreakerPolicy = Policy
-			.Handle<HttpRequestException>()
-			.CircuitBreakerAsync(
-				exceptionsAllowedBeforeBreaking: 5,
-				durationOfBreak: TimeSpan.FromSeconds(30)
-			);
+		_deploymentSimulator = new DeploymentSimulator(
+			httpClientFactory, 
+			serviceProvider.GetRequiredService<ILogger<DeploymentSimulator>>());
 
-		var retryPolicy = Policy<HttpResponseMessage>
-			.Handle<HttpRequestException>()
-			.OrResult(r => !r.IsSuccessStatusCode)
-			.WaitAndRetryAsync(3, retryAttempt => 
-				TimeSpan.FromSeconds(Math.Pow(2, retryAttempt))
-			);
-		
-		_resiliencePolicy = circuitBreakerPolicy.WrapAsync(retryPolicy);
-		
-		_apiServerClient = new HttpClient();
-		_apiServerClient.BaseAddress = new Uri("http://localhost:5077/apis/app/v1/");
+		_apiServerClient = httpClientFactory.CreateClient("kubernetes");
 		_initialized = true;
 	}
 	
@@ -68,6 +52,8 @@ public class KubernetesClusterSimulator(
 			{
 				break;
 			}
+
+			await _deploymentSimulator!.RunAsync(token);
 		}
 		
 		logger.LogInformation("Received {count} deployment items", deploymentList.Items.Count);
@@ -98,33 +84,37 @@ public class KubernetesClusterSimulator(
 		// }
 	}
 
-	async Task<DeploymentList?> GetDeploymentCollections(CancellationToken cancellationToken)
+	async ValueTask<DeploymentList?> GetDeploymentCollections(CancellationToken cancellationToken)
 	{ 
-		try
-		{
-			var response = await _resiliencePolicy.ExecuteAsync(async ct =>
-					await _apiServerClient!.GetAsync("deployments", cancellationToken: ct),
-				cancellationToken);
+		var response = await _apiServerClient!.GetAsync("deployments", cancellationToken: cancellationToken);
+		response.EnsureSuccessStatusCode();
 
-			if (!response.IsSuccessStatusCode)
-			{
-				return null;
-			}
-
-			return await response.Content.ReadFromJsonAsync<DeploymentList>(cancellationToken: cancellationToken);
-		}
-		catch (BrokenCircuitException)
-		{
-			// Log the circuit breaker open state
-			logger.LogWarning("Circuit breaker is open. Deployment service is currently unavailable.");
-			throw;
-		}
-		catch (HttpRequestException ex)
-		{
-			// Log the exception
-			logger.LogError($"An error occurred while fetching deployment collections: {ex.Message}");
-			return null;
-		}
+		return await response.Content.ReadFromJsonAsync<DeploymentList>(cancellationToken: cancellationToken);
+		
+		// try
+		// {
+		// 	return await _resiliencePipeline!.ExecuteAsync(static async (state, ct) =>
+		// 	{
+		// 		var response = await state!.GetAsync("deployments", cancellationToken: ct);
+		// 		response.EnsureSuccessStatusCode();
+		//
+		// 		return await response.Content.ReadFromJsonAsync<DeploymentList>(cancellationToken: ct);
+		// 	}, _apiServerClient, cancellationToken);
+		// }
+		// catch (BrokenCircuitException bex)
+		// {
+		// 	// Log the circuit breaker open state
+		// 	logger.LogWarning("Circuit breaker is open. Deployment service is currently unavailable.");
+		// 	logger.LogWarning(bex.ToString());
+		// 	await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+		// 	return null;
+		// }
+		// catch (HttpRequestException ex)
+		// {
+		// 	// Log the exception
+		// 	logger.LogError($"An error occurred while fetching deployment collections: {ex.Message}");
+		// 	return null;
+		// }
 	}
 
 	async Task CreatePod(string image)

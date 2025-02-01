@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 namespace SimpleK8.Console;
 
 public class HostedService(
+	IHttpClientFactory httpClientFactory,
 	ILogger<HostedService> logger,
 	IHostApplicationLifetime appLifetime,
 	IServiceProvider serviceProvider) : IHostedService
@@ -17,20 +18,14 @@ public class HostedService(
 
 		appLifetime.ApplicationStarted.Register(() =>
 		{
-			var cluster = new KubernetesClusterSimulator(serviceProvider.GetRequiredService<ILogger<KubernetesClusterSimulator>>(),
+			var cluster = new KubernetesClusterSimulator(httpClientFactory, serviceProvider.GetRequiredService<ILogger<KubernetesClusterSimulator>>(),
 				serviceProvider);
-
-			var deploymentSimulator = new DeploymentSimulator(serviceProvider.GetRequiredService<ILogger<DeploymentSimulator>>());
-
-			cluster.Init();
-			deploymentSimulator.Init();
-
-			var clusterTask = cluster.RunClusterAsync(cancellationToken);
-			var deploymentSimulatorTask = deploymentSimulator.StartAsync(cancellationToken);
-
+			
 			try
 			{
-				Task.WaitAll([clusterTask, deploymentSimulatorTask], cancellationToken);
+				cluster.Init();
+				
+				cluster.RunClusterAsync(cancellationToken).Wait(cancellationToken);
 				logger.LogInformation($"Simulation completed");
 
 				_exitCode = 0;

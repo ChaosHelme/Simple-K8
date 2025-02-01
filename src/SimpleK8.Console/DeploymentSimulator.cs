@@ -4,7 +4,9 @@ using SimpleK8.DataContracts;
 
 namespace SimpleK8.Console;
 
-public class DeploymentSimulator(ILogger<DeploymentSimulator> logger) : IDisposable
+public class DeploymentSimulator(
+	IHttpClientFactory httpClientFactory,
+	ILogger<DeploymentSimulator> logger) : IDisposable
 {
 	HttpClient? _apiServerClient;
 	bool _initialized;
@@ -13,12 +15,11 @@ public class DeploymentSimulator(ILogger<DeploymentSimulator> logger) : IDisposa
 	{
 		logger.LogInformation("Initializing Deployment Simulator");
 		
-		_apiServerClient = new HttpClient();
-		_apiServerClient.BaseAddress = new Uri("http://localhost:5077/apis/app/v1/");
+		_apiServerClient = httpClientFactory.CreateClient("kubernetes");
 		_initialized = true;
 	}
 
-	public async Task StartAsync(CancellationToken cancellationToken)
+	public async Task RunAsync(CancellationToken cancellationToken)
 	{
 		logger.LogInformation("Starting Deployment Simulator");
 
