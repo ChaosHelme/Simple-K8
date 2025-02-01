@@ -76,7 +76,7 @@ public class DeploymentRepository(IEtcdClient etcdClient, ILogger<DeploymentRepo
 		return response.Deleted > 0;
 	}
 
-	static DeploymentList BuildDeploymentList(RangeResponse? value)
+	DeploymentList BuildDeploymentList(RangeResponse? value)
 	{
 		var deploymentList = new DeploymentList("v1", [], "deployments", null);
 		if (value is null)
@@ -84,7 +84,7 @@ public class DeploymentRepository(IEtcdClient etcdClient, ILogger<DeploymentRepo
 		
 		foreach (var keyValue in value.Kvs)
 		{
-			var path = keyValue.Key.ToStringUtf8();
+			logger.LogDebug("deployment path: {path}", keyValue.Key.ToStringUtf8());
 			var deployment = JsonSerializer.Deserialize<Deployment>(keyValue.Value.ToStringUtf8());
 			deploymentList.Items.Add(deployment!);
 		}

@@ -59,7 +59,7 @@ public class KubernetesClusterSimulator(
 		logger.LogInformation("Received {count} deployment items", deploymentList.Items.Count);
 		foreach (var deployment in deploymentList.Items)
 		{
-			// ToDo...
+			logger.LogInformation("Processing deployment: {deployment}", deployment);
 		}
 
 		// controllerManager.StartControllers(token);
