@@ -17,7 +17,7 @@ services:
       context: ./src
       dockerfile: Dockerfile
     ports:
-      - "5077:8080"
+      - "5088:8080"
     depends_on:
       - etcd
     environment:

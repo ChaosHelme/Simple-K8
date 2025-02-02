@@ -2,6 +2,9 @@
 using dotnet_etcd;
 using dotnet_etcd.interfaces;
 using Grpc.Core;
+using OpenTelemetry;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
 using Serilog;
 using SimpleK8.Api.Configurations;
 using SimpleK8.Cluster;
@@ -13,6 +16,24 @@ namespace SimpleK8.Api.Extensions;
 internal static class WebApplicationBuilderExtension {
 	internal static WebApplication CreateApplication(this WebApplicationBuilder builder)
 	{
+		builder.Services.AddOpenTelemetry()
+			.WithTracing(config =>
+			{
+				config
+					.AddHttpClientInstrumentation()
+					.AddAspNetCoreInstrumentation()
+					.AddConsoleExporter()
+					.AddOtlpExporter();
+			})
+			.WithMetrics(config =>
+			{
+				config
+					.AddHttpClientInstrumentation()
+					.AddAspNetCoreInstrumentation()
+					.AddConsoleExporter()
+					.AddOtlpExporter();
+			});
+		
 		builder.Services.AddMediatR(options =>
 		{
 			options.AutoRegisterRequestProcessors = true;
