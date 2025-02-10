@@ -1,7 +1,6 @@
 using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
 using SimpleK8.Core.DataContracts;
-using Container = SimpleK8.Core.DataContracts.Container;
 
 namespace SimpleK8.Simulation.Console;
 
@@ -27,13 +26,13 @@ public sealed class DeploymentSimulator : IDisposable
 		
 		var deployment = CreateDeployment();
 		
-		var response = await _apiServerClient!.PostAsJsonAsync("deployments", deployment, cancellationToken);
+		var response = await _apiServerClient.PostAsJsonAsync("deployments", deployment, cancellationToken);
 		response.EnsureSuccessStatusCode();
 	}
 	
 	public async ValueTask<DeploymentList?> GetDeploymentListAsync(CancellationToken cancellationToken)
 	{ 
-		var response = await _apiServerClient!.GetAsync("deployments", cancellationToken: cancellationToken);
+		var response = await _apiServerClient.GetAsync("deployments", cancellationToken: cancellationToken);
 		response.EnsureSuccessStatusCode();
 
 		return await response.Content.ReadFromJsonAsync<DeploymentList>(cancellationToken: cancellationToken);
@@ -41,7 +40,7 @@ public sealed class DeploymentSimulator : IDisposable
 
 	public async ValueTask<Deployment?> GetDeploymentAsync(string @namespace, string name, CancellationToken cancellationToken)
 	{
-		var response = await _apiServerClient!.GetAsync($"namespaces/{@namespace}/deployments/{name}", cancellationToken: cancellationToken);
+		var response = await _apiServerClient.GetAsync($"namespaces/{@namespace}/deployments/{name}", cancellationToken: cancellationToken);
 		response.EnsureSuccessStatusCode();
 		
 		return await response.Content.ReadFromJsonAsync<Deployment>(cancellationToken: cancellationToken);
@@ -55,31 +54,26 @@ public sealed class DeploymentSimulator : IDisposable
 
 	static Deployment CreateDeployment()
 	{
-		var deployment = new Deployment("v1",
-			"deployment",
-			new ObjectMetadata(Guid.NewGuid(),
-				"test",
-				"default"),
-			new DeploymentSpec(5,
-				0,
-				5,
-				2,
-				2,
-				new LabelSelector(),
-				new DeploymentStrategie(),
-				new PodTemplateSpec(new ObjectMetadata(Guid.NewGuid(),
-						"testPodTemplateSpec",
-						"default"),
-					new PodSpec([
-							new Container([], [], [], "", ""),
-						],
-						[], "testNodeName"))));
+		var deployment = new Deployment
+		{
+			ApiVersion = "v1",
+			Kind = "deployment",
+			Metadata = new ObjectMeta {Name = "test", Namespace = "testNamespace",},
+			Spec = new DeploymentSpec
+			{
+				Template = new PodTemplateSpec
+				{
+					Metadata = new ObjectMeta {Name = "testPodTemplateSpec", Namespace = "testNamespace",},
+					Spec = new PodSpec {Containers = []}
+				}
+			}
+		};
 
 		return deployment;
 	}
 
 	public void Dispose()
 	{
-		_apiServerClient?.Dispose();
+		_apiServerClient.Dispose();
 	}
 }

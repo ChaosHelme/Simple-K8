@@ -2,9 +2,9 @@ using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SimpleK8.Cluster.Commands;
+using SimpleK8.Cluster.Dtos;
 using SimpleK8.Cluster.Queries;
 using SimpleK8.Core.DataContracts;
-using SimpleK8.Core.DataContracts.Dtos;
 
 namespace SimpleK8.Api.Controllers.Workload;
 

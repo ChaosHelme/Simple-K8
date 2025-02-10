@@ -1,5 +1,5 @@
+using SimpleK8.Cluster.Dtos;
 using SimpleK8.Core.DataContracts;
-using SimpleK8.Core.DataContracts.Dtos;
 
 namespace SimpleK8.Cluster;
 

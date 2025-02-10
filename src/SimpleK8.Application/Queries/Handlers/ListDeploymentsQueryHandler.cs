@@ -3,11 +3,10 @@ using SimpleK8.Core.DataContracts;
 
 namespace SimpleK8.Cluster.Queries.Handlers;
 
-public class ListDeploymentsQueryHandler(IDeploymentRepository deploymentRepository) : IRequestHandler<ListDeploymentsQuery, DeploymentList>
+public class ListDeploymentsQueryHandler(IDeploymentRepository deploymentRepository) : IRequestHandler<ListDeploymentsQuery, DeploymentList?>
 {
-	public async Task<DeploymentList> Handle(ListDeploymentsQuery request, CancellationToken cancellationToken)
+	public async Task<DeploymentList?> Handle(ListDeploymentsQuery request, CancellationToken cancellationToken)
 	{
-		var deploymentList = await deploymentRepository.ListDeployments(request.NamespaceName, cancellationToken);
-		return deploymentList ?? DeploymentList.Empty;	
+		return await deploymentRepository.ListDeployments(request.NamespaceName, cancellationToken);
 	}
 }

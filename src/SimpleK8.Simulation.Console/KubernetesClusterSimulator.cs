@@ -9,7 +9,7 @@ public sealed class KubernetesClusterSimulator
 {
 	public List<IWorkerNode> WorkerNodes { get; } = [];
 
-	readonly DeploymentSimulator? _deploymentSimulator;
+	readonly DeploymentSimulator _deploymentSimulator;
 	readonly ILogger<KubernetesClusterSimulator> _logger;
 	readonly IServiceProvider _serviceProvider;
 	
@@ -37,11 +37,11 @@ public sealed class KubernetesClusterSimulator
 	{
 		_logger.LogInformation("Starting cluster simulation");
 
-		var deploymentList = DeploymentList.Empty;
+		DeploymentList? deploymentList = null;
 		while (deploymentList is null || deploymentList.Items.Count <= 0 || token.IsCancellationRequested)
 		{
 			_logger.LogInformation("Fetching deployment list...");
-			deploymentList = await _deploymentSimulator!.GetDeploymentListAsync(token);
+			deploymentList = await _deploymentSimulator.GetDeploymentListAsync(token);
 			if (deploymentList is not null && deploymentList.Items.Count > 0)
 			{
 				break;

@@ -21,7 +21,7 @@ public class Pod
 		Id = Guid.NewGuid().ToString();
 		Image = image;
 		Containers = [new ContainerWrapper(
-			new Container([], [], [], "test:v1", "test"),
+			new Container(),
 			serviceProvider.GetRequiredService<ILogger<ContainerWrapper>>())];
 		Status = PodStatus.Pending;
 		

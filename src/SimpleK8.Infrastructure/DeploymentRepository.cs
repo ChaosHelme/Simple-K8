@@ -3,8 +3,8 @@ using dotnet_etcd.interfaces;
 using Etcdserverpb;
 using Microsoft.Extensions.Logging;
 using SimpleK8.Cluster;
+using SimpleK8.Cluster.Dtos;
 using SimpleK8.Core.DataContracts;
-using SimpleK8.Core.DataContracts.Dtos;
 
 namespace SimpleK8.Infrastructure;
 
@@ -26,8 +26,8 @@ public class DeploymentRepository(IEtcdClient etcdClient, ILogger<DeploymentRepo
 	{
 		var response = await etcdClient.PutAsync($"deployments/{deployment.Metadata.Namespace}/{deployment.Metadata.Name}", 
 			JsonSerializer.Serialize(deployment), cancellationToken: cancellationToken);
-		logger.LogInformation("Created deployment {deploymentName}", deployment.Metadata.Name);
-		logger.LogInformation("etcd information: {info}", response.Header.ToString());
+		logger.LogInformation("Created deployment {DeploymentName}", deployment.Metadata.Name);
+		logger.LogInformation("etcd information: {Info}", response.Header.ToString());
 
 		return true;
 	}
@@ -37,7 +37,7 @@ public class DeploymentRepository(IEtcdClient etcdClient, ILogger<DeploymentRepo
 		var persistedDeploymentString = await etcdClient.GetValAsync($"deployments/{requestNamespaceName}/{requestName}", cancellationToken: cancellationToken);
 		if (string.IsNullOrEmpty(persistedDeploymentString))
 		{
-			logger.LogWarning("No deployment to update found for {namespace}/{name}", requestNamespaceName, requestName);
+			logger.LogWarning("No deployment to update found for {Namespace}/{Name}", requestNamespaceName, requestName);
 			return null;
 		}
 		var persistedDeployment = JsonSerializer.Deserialize<Deployment>(persistedDeploymentString);
@@ -78,13 +78,19 @@ public class DeploymentRepository(IEtcdClient etcdClient, ILogger<DeploymentRepo
 
 	DeploymentList BuildDeploymentList(RangeResponse? value)
 	{
-		var deploymentList = new DeploymentList("v1", [], "deployments", null);
+		var deploymentList = new DeploymentList
+		{
+			ApiVersion = "v1",
+			Items = [],
+			Kind = "deployments",
+			Metadata = new ListMeta()
+		};
 		if (value is null)
 			return deploymentList;
 		
 		foreach (var keyValue in value.Kvs)
 		{
-			logger.LogDebug("deployment path: {path}", keyValue.Key.ToStringUtf8());
+			logger.LogDebug("deployment path: {Path}", keyValue.Key.ToStringUtf8());
 			var deployment = JsonSerializer.Deserialize<Deployment>(keyValue.Value.ToStringUtf8());
 			deploymentList.Items.Add(deployment!);
 		}
