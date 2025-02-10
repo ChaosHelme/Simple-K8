@@ -1,4 +1,4 @@
-﻿namespace SimpleK8.DataContracts;
+﻿namespace SimpleK8.Core.DataContracts;
 
 public record DeploymentList(string ApiVersion, List<Deployment> Items, string Kind, object? Metadata)
 {

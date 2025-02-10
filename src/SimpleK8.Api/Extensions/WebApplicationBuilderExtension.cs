@@ -2,7 +2,6 @@
 using dotnet_etcd;
 using dotnet_etcd.interfaces;
 using Grpc.Core;
-using OpenTelemetry;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Serilog;
@@ -22,7 +21,6 @@ internal static class WebApplicationBuilderExtension {
 				config
 					.AddHttpClientInstrumentation()
 					.AddAspNetCoreInstrumentation()
-					.AddConsoleExporter()
 					.AddOtlpExporter();
 			})
 			.WithMetrics(config =>
@@ -30,7 +28,6 @@ internal static class WebApplicationBuilderExtension {
 				config
 					.AddHttpClientInstrumentation()
 					.AddAspNetCoreInstrumentation()
-					.AddConsoleExporter()
 					.AddOtlpExporter();
 			});
 		

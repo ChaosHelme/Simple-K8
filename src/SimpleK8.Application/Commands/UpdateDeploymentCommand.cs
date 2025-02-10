@@ -1,6 +1,6 @@
 using MediatR;
-using SimpleK8.DataContracts;
-using SimpleK8.DataContracts.Dtos;
+using SimpleK8.Core.DataContracts;
+using SimpleK8.Core.DataContracts.Dtos;
 
 namespace SimpleK8.Cluster.Commands;
 

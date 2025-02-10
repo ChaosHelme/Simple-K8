@@ -21,6 +21,10 @@ var builder = Host.CreateDefaultBuilder(args)
 
 SelfLog.Enable(Console.Error);
 
+builder.ConfigureAppConfiguration(config =>
+{
+	config.AddJsonFile("appsettings.json");
+});
 builder.ConfigureServices(ConfigureServices);
 
 await builder.RunConsoleAsync();
@@ -31,13 +35,11 @@ void ConfigureServices(IServiceCollection serviceCollection)
 {
 	serviceCollection
 		.AddHostedService<HostedService>()
-		.AddScoped<IServiceRegistry, ServiceRegistry>();
+		.AddScoped<IServiceRegistry, ServiceRegistry>()
+		.AddSingleton<KubernetesHttpClientFactory>();
 	
 	serviceCollection
-		.AddHttpClient("kubernetes", client =>
-		{
-			client.BaseAddress = new Uri("http://localhost:5077/apis/app/v1/");
-		})
+		.AddHttpClient("kubernetes")
 		.AddTransientHttpErrorPolicy(httpClientBuilder => httpClientBuilder.WaitAndRetryAsync([
 			TimeSpan.FromSeconds(1),
 			TimeSpan.FromSeconds(5),

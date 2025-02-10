@@ -3,8 +3,8 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using SimpleK8.Cluster.Commands;
 using SimpleK8.Cluster.Queries;
-using SimpleK8.DataContracts;
-using SimpleK8.DataContracts.Dtos;
+using SimpleK8.Core.DataContracts;
+using SimpleK8.Core.DataContracts.Dtos;
 
 namespace SimpleK8.Api.Controllers.Workload;
 
@@ -32,9 +32,14 @@ public class DeploymentsController(IMediator mediator) : ControllerBase
 	}
 
 	[HttpGet("namespaces/{namespaceName}/[controller]/{deploymentName}")]
-	public ActionResult<Deployment> GetSpecifiedDeployment(string namespaceName, string deploymentName)
+	public async ValueTask<ActionResult<Deployment>> GetSpecifiedDeployment(string namespaceName, string deploymentName)
 	{
-		return Ok(mediator.Send(new GetDeploymentQuery(deploymentName, namespaceName)));
+		var deployment = await mediator.Send(new GetDeploymentQuery(deploymentName, namespaceName));
+		if (deployment is null)
+		{
+			return NotFound();
+		}
+		return Ok(deployment);
 	}
 	
 	/// <summary>

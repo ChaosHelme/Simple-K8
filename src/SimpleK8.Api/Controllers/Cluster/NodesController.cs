@@ -1,7 +1,7 @@
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SimpleK8.DataContracts;
+using SimpleK8.Core.DataContracts;
 
 namespace SimpleK8.Api.Controllers.Cluster;
 

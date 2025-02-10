@@ -1,4 +1,4 @@
-namespace SimpleK8.DataContracts;
+namespace SimpleK8.Core.DataContracts;
 
 public record Service(string ApiVersion, string Kind, object Metadata, ServiceSpec Spec, ServiceStatus Status);
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SimpleK8.Core.DataContracts;
 
 namespace SimpleK8.Core;
 
@@ -10,7 +11,7 @@ public class Pod
 	public PodStatus Status { get; private set; }
 
 	public bool HasFailedContainers => Containers.Any(c => c.Status == ContainerStatus.Failed);
-	public List<Container> Containers { get; }
+	public List<ContainerWrapper> Containers { get; }
 	public string? AssignedNode { get; set; }
 
 	readonly ILogger<Pod> _logger;
@@ -19,7 +20,9 @@ public class Pod
 	{
 		Id = Guid.NewGuid().ToString();
 		Image = image;
-		Containers = [new Container(image, serviceProvider.GetRequiredService<ILogger<Container>>())];
+		Containers = [new ContainerWrapper(
+			new Container([], [], [], "test:v1", "test"),
+			serviceProvider.GetRequiredService<ILogger<ContainerWrapper>>())];
 		Status = PodStatus.Pending;
 		
 		_logger = logger;

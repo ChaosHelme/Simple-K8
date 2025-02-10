@@ -3,8 +3,8 @@ using dotnet_etcd.interfaces;
 using Etcdserverpb;
 using Microsoft.Extensions.Logging;
 using SimpleK8.Cluster;
-using SimpleK8.DataContracts;
-using SimpleK8.DataContracts.Dtos;
+using SimpleK8.Core.DataContracts;
+using SimpleK8.Core.DataContracts.Dtos;
 
 namespace SimpleK8.Infrastructure;
 

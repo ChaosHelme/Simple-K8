@@ -1,4 +1,4 @@
-namespace SimpleK8.DataContracts;
+namespace SimpleK8.Core.DataContracts;
 
 /// <summary>
 /// This is defined by the user and describes the desired state of system. Fill this in when creating or updating an object.
@@ -22,8 +22,6 @@ public record DeploymentSpec(
 	PodTemplateSpec Template);
 	
 public record DeploymentCondition;
-
-public record PodTemplateSpec;
 
 public record DeploymentStrategie;
 

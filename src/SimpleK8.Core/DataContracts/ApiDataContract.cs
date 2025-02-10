@@ -1,4 +1,4 @@
-namespace SimpleK8.DataContracts;
+namespace SimpleK8.Core.DataContracts;
 
 public record ApiDataContract(string ApiVersion, string Kind, ObjectMetadata Metadata);
 

@@ -1,4 +1,4 @@
-namespace SimpleK8.DataContracts;
+namespace SimpleK8.Core.DataContracts;
 
 public record Node(string ApiVersion, string Kind, object Metadata, NodeSpec Spec, NodeStatus Status);
 

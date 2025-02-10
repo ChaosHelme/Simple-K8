@@ -1,57 +1,79 @@
 using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
-using SimpleK8.DataContracts;
+using SimpleK8.Core.DataContracts;
+using Container = SimpleK8.Core.DataContracts.Container;
 
 namespace SimpleK8.Simulation.Console;
 
-public class DeploymentSimulator(
-	IHttpClientFactory httpClientFactory,
-	ILogger<DeploymentSimulator> logger) : IDisposable
+public sealed class DeploymentSimulator : IDisposable
 {
-	HttpClient? _apiServerClient;
-	bool _initialized;
-
-	public void Init()
+	readonly HttpClient _apiServerClient;
+	readonly ILogger<DeploymentSimulator> _logger;
+	
+	public DeploymentSimulator(
+		KubernetesHttpClientFactory httpClientFactory,
+		ILogger<DeploymentSimulator> logger)
 	{
-		logger.LogInformation("Initializing Deployment Simulator");
+		_logger = logger;
 		
-		_apiServerClient = httpClientFactory.CreateClient("kubernetes");
-		_initialized = true;
+		_logger.LogInformation("Initializing Deployment Simulator");
+		
+		_apiServerClient = httpClientFactory.CreateClient();
 	}
-
-	public async Task RunAsync(CancellationToken cancellationToken)
+	
+	public async Task CreateDeploymentAsync(CancellationToken cancellationToken)
 	{
-		logger.LogInformation("Starting Deployment Simulator");
-
-		if (!_initialized)
-		{
-			Init();
-		}
+		_logger.LogInformation("Starting Deployment Simulator");
 		
 		var deployment = CreateDeployment();
 		
 		var response = await _apiServerClient!.PostAsJsonAsync("deployments", deployment, cancellationToken);
 		response.EnsureSuccessStatusCode();
 	}
+	
+	public async ValueTask<DeploymentList?> GetDeploymentListAsync(CancellationToken cancellationToken)
+	{ 
+		var response = await _apiServerClient!.GetAsync("deployments", cancellationToken: cancellationToken);
+		response.EnsureSuccessStatusCode();
+
+		return await response.Content.ReadFromJsonAsync<DeploymentList>(cancellationToken: cancellationToken);
+	}
+
+	public async ValueTask<Deployment?> GetDeploymentAsync(string @namespace, string name, CancellationToken cancellationToken)
+	{
+		var response = await _apiServerClient!.GetAsync($"namespaces/{@namespace}/deployments/{name}", cancellationToken: cancellationToken);
+		response.EnsureSuccessStatusCode();
+		
+		return await response.Content.ReadFromJsonAsync<Deployment>(cancellationToken: cancellationToken);
+	}
+
+	public async ValueTask<DeploymentStatus?> GetDeploymentStatusAsync(string @namespace, string name, CancellationToken cancellationToken)
+	{
+		var deployment = await GetDeploymentAsync(@namespace, name, cancellationToken);
+		return deployment?.Status;
+	}
 
 	static Deployment CreateDeployment()
 	{
-		var deployment = new Deployment(
-			"v1",
+		var deployment = new Deployment("v1",
 			"deployment",
-			new ObjectMetadata(
-				Guid.NewGuid(), 
+			new ObjectMetadata(Guid.NewGuid(),
 				"test",
 				"default"),
-			new DeploymentSpec(
-				5,
+			new DeploymentSpec(5,
 				0,
 				5,
 				2,
 				2,
 				new LabelSelector(),
 				new DeploymentStrategie(),
-				new PodTemplateSpec()));
+				new PodTemplateSpec(new ObjectMetadata(Guid.NewGuid(),
+						"testPodTemplateSpec",
+						"default"),
+					new PodSpec([
+							new Container([], [], [], "", ""),
+						],
+						[], "testNodeName"))));
 
 		return deployment;
 	}

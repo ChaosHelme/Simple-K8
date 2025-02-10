@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 namespace SimpleK8.Simulation.Console;
 
 public class HostedService(
-	IHttpClientFactory httpClientFactory,
+	KubernetesHttpClientFactory httpClientFactory,
 	ILogger<HostedService> logger,
 	IHostApplicationLifetime appLifetime,
 	IServiceProvider serviceProvider) : IHostedService
@@ -14,7 +14,7 @@ public class HostedService(
 	
 	public Task StartAsync(CancellationToken cancellationToken)
 	{
-		logger.LogDebug("Starting with arguments: {arguments}", string.Join(" ", Environment.GetCommandLineArgs()));
+		logger.LogDebug("Starting with arguments: {Arguments}", string.Join(" ", Environment.GetCommandLineArgs()));
 
 		appLifetime.ApplicationStarted.Register(() =>
 		{
@@ -23,15 +23,12 @@ public class HostedService(
 			
 			try
 			{
-				cluster.Init();
-				
 				cluster.RunClusterAsync(cancellationToken).Wait(cancellationToken);
 				logger.LogInformation($"Simulation completed");
 
 				_exitCode = 0;
-			} catch (OperationCanceledException ex)
+			} catch (OperationCanceledException)
 			{
-				logger.LogInformation("Operation cancelled!");
 				_exitCode = 0;
 			} catch (AggregateException aggEx)
 			{

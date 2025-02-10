@@ -1,5 +1,5 @@
 using MediatR;
-using SimpleK8.DataContracts;
+using SimpleK8.Core.DataContracts;
 
 namespace SimpleK8.Cluster.Queries;
 
