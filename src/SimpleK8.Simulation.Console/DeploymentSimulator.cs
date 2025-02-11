@@ -60,7 +60,7 @@ public sealed class DeploymentSimulator : IDisposable
 
 	static CreateDeploymentRequest CreateDeployment()
 	{
-		var deployment = new CreateDeploymentRequest("test", "test", new DeploymentSpecDto{ Replicas = 2 });
+		var deployment = new CreateDeploymentRequest(new ObjectMetaDto("test", "test"), new DeploymentSpecDto{ Replicas = 2 });
 
 		return deployment;
 	}
