@@ -3,4 +3,4 @@ using SimpleK8.Core.DataContracts;
 
 namespace SimpleK8.Application.Requests;
 
-public record CreateDeploymentRequest(string Namespace, string Name, DeploymentSpecDto DeploymentSpec);
+public record CreateDeploymentRequest(ObjectMetaDto ObjectMetaDto, DeploymentSpecDto DeploymentSpec);
