@@ -1,3 +1,3 @@
-namespace SimpleK8.Cluster.Commands;
+namespace SimpleK8.Application.Commands;
 
 public record UpdateDeploymentStatusCommand(string namespaceName, string deploymentName);

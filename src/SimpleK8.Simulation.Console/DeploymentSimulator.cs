@@ -1,5 +1,7 @@
 using System.Net.Http.Json;
 using Microsoft.Extensions.Logging;
+using SimpleK8.Application.DTOs;
+using SimpleK8.Application.Requests;
 using SimpleK8.Core.DataContracts;
 
 namespace SimpleK8.Simulation.Console;
@@ -27,7 +29,11 @@ public sealed class DeploymentSimulator : IDisposable
 		var deployment = CreateDeployment();
 		
 		var response = await _apiServerClient.PostAsJsonAsync("deployments", deployment, cancellationToken);
-		response.EnsureSuccessStatusCode();
+		if (!response.IsSuccessStatusCode)
+		{
+			var details = await response.Content.ReadAsStringAsync(cancellationToken);
+			throw new HttpRequestException($"Failed to create deployment: {response.StatusCode}. Details: {details}");
+		}
 	}
 	
 	public async ValueTask<DeploymentList?> GetDeploymentListAsync(CancellationToken cancellationToken)
@@ -52,22 +58,9 @@ public sealed class DeploymentSimulator : IDisposable
 		return deployment?.Status;
 	}
 
-	static Deployment CreateDeployment()
+	static CreateDeploymentRequest CreateDeployment()
 	{
-		var deployment = new Deployment
-		{
-			ApiVersion = "v1",
-			Kind = "deployment",
-			Metadata = new ObjectMeta {Name = "test", Namespace = "testNamespace",},
-			Spec = new DeploymentSpec
-			{
-				Template = new PodTemplateSpec
-				{
-					Metadata = new ObjectMeta {Name = "testPodTemplateSpec", Namespace = "testNamespace",},
-					Spec = new PodSpec {Containers = []}
-				}
-			}
-		};
+		var deployment = new CreateDeploymentRequest("test", "test", new DeploymentSpecDto(2));
 
 		return deployment;
 	}

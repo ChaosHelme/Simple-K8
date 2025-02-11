@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace SimpleK8.Cluster.Commands.Handlers;
+namespace SimpleK8.Application.Commands.Handlers;
 
 public class DeleteDeploymentCommandHandler(IDeploymentRepository deploymentRepository) : IRequestHandler<DeleteDeploymentCommand, bool>
 {

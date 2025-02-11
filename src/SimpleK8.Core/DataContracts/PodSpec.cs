@@ -1,40 +1,50 @@
+using System.Text.Json.Serialization;
+
 namespace SimpleK8.Core.DataContracts;
 
 /// <summary>
 /// PodSpec is a description of a pod.
 /// </summary>
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-public partial class PodSpec
+public class PodSpec
 {
 	/// <summary>
-	/// Optional duration in seconds the pod may be active on the node relative to StartTime before the system will actively try to mark it failed and kill associated containers. Value must be a positive integer.
+	/// Optional duration in seconds the pod may be active on the node relative to StartTime before the system will actively try to mark it failed and kill associated containers.
+	/// Value must be a positive integer.
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("activeDeadlineSeconds", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+	[JsonPropertyName("activeDeadlineSeconds")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public long? ActiveDeadlineSeconds { get; set; }
 
 	/// <summary>
 	/// If specified, the pod's scheduling constraints
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("affinity", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public Affinity Affinity { get; set; }
+	[JsonPropertyName("affinity")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public Affinity? Affinity { get; set; }
 
 	/// <summary>
 	/// AutomountServiceAccountToken indicates whether a service account token should be automatically mounted.
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("automountServiceAccountToken", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+	[JsonPropertyName("automountServiceAccountToken")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public bool? AutomountServiceAccountToken { get; set; }
 
 	/// <summary>
-	/// List of containers belonging to the pod. Containers cannot currently be added or removed. There must be at least one container in a Pod. Cannot be updated.
+	/// List of containers belonging to the pod.
+	/// Containers cannot currently be added or removed.
+	/// There must be at least one container in a Pod. Cannot be updated.
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("containers", Required = Newtonsoft.Json.Required.Always)]
+	[JsonPropertyName("containers")]
+	[JsonRequired]
 	[System.ComponentModel.DataAnnotations.Required]
-	public System.Collections.Generic.List<Container> Containers { get; set; } = new System.Collections.Generic.List<Container>();
+	public List<Container> Containers { get; set; } = [];
 
 	/// <summary>
-	/// Specifies the DNS parameters of a pod. Parameters specified here will be merged to the generated DNS configuration based on DNSPolicy.
+	/// Specifies the DNS parameters of a pod.
+	/// Parameters specified here will be merged to the generated DNS configuration based on DNSPolicy.
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("dnsConfig", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+	[JsonPropertyName("dnsConfig")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public PodDNSConfig DnsConfig { get; set; }
 
 	/// <summary>
@@ -53,13 +63,13 @@ public partial class PodSpec
 	/// List of ephemeral containers run in this pod. Ephemeral containers may be run in an existing pod to perform user-initiated actions such as debugging. This list cannot be specified when creating a pod, and it cannot be modified by updating the pod spec. In order to add an ephemeral container to an existing pod, use the pod's ephemeralcontainers subresource.
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("ephemeralContainers", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public System.Collections.Generic.List<EphemeralContainer> EphemeralContainers { get; set; }
+	public List<EphemeralContainer> EphemeralContainers { get; set; }
 
 	/// <summary>
 	/// HostAliases is an optional list of hosts and IPs that will be injected into the pod's hosts file if specified.
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("hostAliases", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public System.Collections.Generic.List<HostAlias> HostAliases { get; set; }
+	public List<HostAlias> HostAliases { get; set; }
 
 	/// <summary>
 	/// Use the host's ipc namespace. Optional: Default to false.
@@ -95,13 +105,13 @@ public partial class PodSpec
 	/// ImagePullSecrets is an optional list of references to secrets in the same namespace to use for pulling any of the images used by this PodSpec. If specified, these secrets will be passed to individual puller implementations for them to use. More info: https://kubernetes.io/docs/concepts/containers/images#specifying-imagepullsecrets-on-a-pod
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("imagePullSecrets", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public System.Collections.Generic.List<LocalObjectReference> ImagePullSecrets { get; set; }
+	public List<LocalObjectReference> ImagePullSecrets { get; set; }
 
 	/// <summary>
 	/// List of initialization containers belonging to the pod. Init containers are executed in order prior to containers being started. If any init container fails, the pod is considered to have failed and is handled according to its restartPolicy. The name for an init container or normal container must be unique among all containers. Init containers may not have Lifecycle actions, Readiness probes, Liveness probes, or Startup probes. The resourceRequirements of an init container are taken into account during scheduling by finding the highest request/limit for each resource type, and then using the max of of that value or the sum of the normal containers. Limits are applied to init containers in a similar fashion. Init containers cannot currently be added or removed. Cannot be updated. More info: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("initContainers", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public System.Collections.Generic.List<Container> InitContainers { get; set; }
+	public List<Container> InitContainers { get; set; }
 
 	/// <summary>
 	/// NodeName indicates in which node this pod is scheduled. If empty, this pod is a candidate for scheduling by the scheduler defined in schedulerName. Once this field is set, the kubelet for this node becomes responsible for the lifecycle of this pod. This field should not be used to express a desire for the pod to be scheduled on a specific node. https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodename
@@ -113,7 +123,7 @@ public partial class PodSpec
 	/// NodeSelector is a selector which must be true for the pod to fit on a node. Selector which must match a node's labels for the pod to be scheduled on that node. More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("nodeSelector", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public System.Collections.Generic.IDictionary<string, string> NodeSelector { get; set; }
+	public IDictionary<string, string> NodeSelector { get; set; }
 
 	/// <summary>
 	/// Specifies the OS of the containers in the pod. Some pod and container fields are restricted if this is set.
@@ -129,7 +139,7 @@ public partial class PodSpec
 	/// Overhead represents the resource overhead associated with running a pod for a given RuntimeClass. This field will be autopopulated at admission time by the RuntimeClass admission controller. If the RuntimeClass admission controller is enabled, overhead must not be set in Pod create requests. The RuntimeClass admission controller will reject Pod create requests which have the overhead already set. If RuntimeClass is configured and selected in the PodSpec, Overhead will be set to the value defined in the corresponding RuntimeClass, otherwise it will remain unset and treated as zero. More info: https://git.k8s.io/enhancements/keps/sig-node/688-pod-overhead/README.md
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("overhead", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public System.Collections.Generic.IDictionary<string, string> Overhead { get; set; }
+	public IDictionary<string, string> Overhead { get; set; }
 
 	/// <summary>
 	/// PreemptionPolicy is the Policy for preempting pods with lower priority. One of Never, PreemptLowerPriority. Defaults to PreemptLowerPriority if unset.
@@ -153,7 +163,7 @@ public partial class PodSpec
 	/// If specified, all readiness gates will be evaluated for pod readiness. A pod is ready when all its containers are ready AND all conditions specified in the readiness gates have status equal to "True" More info: https://git.k8s.io/enhancements/keps/sig-network/580-pod-readiness-gates
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("readinessGates", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public System.Collections.Generic.List<PodReadinessGate> ReadinessGates { get; set; }
+	public List<PodReadinessGate> ReadinessGates { get; set; }
 
 	/// <summary>
 	/// ResourceClaims defines which ResourceClaims must be allocated and reserved before the Pod is allowed to start. The resources will be made available to those containers which consume them by name.
@@ -163,7 +173,7 @@ public partial class PodSpec
 	/// <br/>This field is immutable.
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("resourceClaims", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public System.Collections.Generic.List<PodResourceClaim> ResourceClaims { get; set; }
+	public List<PodResourceClaim> ResourceClaims { get; set; }
 
 	/// <summary>
 	/// Resources is the total amount of CPU and Memory resources required by all containers in the pod. It supports specifying Requests and Limits for "cpu" and "memory" resource names only. ResourceClaims are not supported.
@@ -199,7 +209,7 @@ public partial class PodSpec
 	/// <br/>SchedulingGates can only be set at pod creation time, and be removed only afterwards.
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("schedulingGates", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public System.Collections.Generic.List<PodSchedulingGate> SchedulingGates { get; set; }
+	public List<PodSchedulingGate> SchedulingGates { get; set; }
 
 	/// <summary>
 	/// SecurityContext holds pod-level security attributes and common container settings. Optional: Defaults to empty.  See type description for default values of each field.
@@ -247,18 +257,18 @@ public partial class PodSpec
 	/// If specified, the pod's tolerations.
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("tolerations", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public System.Collections.Generic.List<Toleration> Tolerations { get; set; }
+	public List<Toleration> Tolerations { get; set; }
 
 	/// <summary>
 	/// TopologySpreadConstraints describes how a group of pods ought to spread across topology domains. Scheduler will schedule pods in a way which abides by the constraints. All topologySpreadConstraints are ANDed.
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("topologySpreadConstraints", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public System.Collections.Generic.List<TopologySpreadConstraint> TopologySpreadConstraints { get; set; }
+	public List<TopologySpreadConstraint> TopologySpreadConstraints { get; set; }
 
 	/// <summary>
 	/// List of volumes that can be mounted by containers belonging to the pod. More info: https://kubernetes.io/docs/concepts/storage/volumes
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("volumes", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public System.Collections.Generic.List<Volume> Volumes { get; set; }
+	public List<Volume> Volumes { get; set; }
 
 }

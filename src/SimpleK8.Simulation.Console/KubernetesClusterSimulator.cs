@@ -54,10 +54,10 @@ public sealed class KubernetesClusterSimulator
 		foreach (var deployment in deploymentList.Items)
 		{
 			_logger.LogInformation("Processing deployment: {Deployment}", deployment);
-			var deploymentStatus = await _deploymentSimulator!.GetDeploymentStatusAsync(deployment.Metadata.Name, deployment.Metadata.Name, token);
+			var deploymentStatus = await _deploymentSimulator.GetDeploymentStatusAsync(deployment.Metadata.Name, deployment.Metadata.Name, token);
 			if (deploymentStatus is not null)
 			{
-				var diff = deployment.DetermineDiff(deploymentStatus);
+				var diff = deployment.DetermineDiff();
 				_logger.LogInformation("Processing differences: {Diff}", diff);
 			}
 		}

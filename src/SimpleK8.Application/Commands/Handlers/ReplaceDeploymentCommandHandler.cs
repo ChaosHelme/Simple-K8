@@ -1,7 +1,7 @@
 using MediatR;
 using SimpleK8.Core.DataContracts;
 
-namespace SimpleK8.Cluster.Commands.Handlers;
+namespace SimpleK8.Application.Commands.Handlers;
 
 public class ReplaceDeploymentCommandHandler(IDeploymentRepository deploymentRepository) : IRequestHandler<ReplaceDeploymentCommand, Deployment?>
 {

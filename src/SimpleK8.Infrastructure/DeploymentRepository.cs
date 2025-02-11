@@ -1,9 +1,10 @@
 ﻿using System.Text.Json;
 using dotnet_etcd.interfaces;
 using Etcdserverpb;
+using Grpc.Core;
 using Microsoft.Extensions.Logging;
-using SimpleK8.Cluster;
-using SimpleK8.Cluster.Dtos;
+using SimpleK8.Application;
+using SimpleK8.Application.Requests;
 using SimpleK8.Core.DataContracts;
 
 namespace SimpleK8.Infrastructure;
@@ -29,10 +30,11 @@ public class DeploymentRepository(IEtcdClient etcdClient, ILogger<DeploymentRepo
 		logger.LogInformation("Created deployment {DeploymentName}", deployment.Metadata.Name);
 		logger.LogInformation("etcd information: {Info}", response.Header.ToString());
 
+		// ToDo: How to determine if persisting was successful?
 		return true;
 	}
 
-	public async Task<Deployment?> UpdateDeployment(string requestNamespaceName, string requestName, DeploymentUpdateDto requestUpdate, CancellationToken cancellationToken)
+	public async Task<Deployment?> UpdateDeployment(string requestNamespaceName, string requestName, UpdateDeploymentRequest requestUpdate, CancellationToken cancellationToken)
 	{
 		var persistedDeploymentString = await etcdClient.GetValAsync($"deployments/{requestNamespaceName}/{requestName}", cancellationToken: cancellationToken);
 		if (string.IsNullOrEmpty(persistedDeploymentString))

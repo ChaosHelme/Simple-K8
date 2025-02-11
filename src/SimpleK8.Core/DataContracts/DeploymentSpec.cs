@@ -47,7 +47,7 @@ public partial class DeploymentSpec
 	/// The deployment strategy to use to replace existing pods with new ones.
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("strategy", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public DeploymentStrategy Strategy { get; set; }
+	public DeploymentStrategy Strategy { get; set; } = new DeploymentStrategy();
 
 	/// <summary>
 	/// Template describes the pods that will be created. The only allowed template.spec.restartPolicy value is "Always".

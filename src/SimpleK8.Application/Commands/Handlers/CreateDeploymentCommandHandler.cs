@@ -1,11 +1,24 @@
 using MediatR;
+using SimpleK8.Core.DataContracts;
 
-namespace SimpleK8.Cluster.Commands.Handlers;
+namespace SimpleK8.Application.Commands.Handlers;
 
-public class CreateDeploymentCommandHandler(IDeploymentRepository deploymentRepository) : IRequestHandler<CreateDeploymentCommand, bool>
+public class CreateDeploymentCommandHandler(IDeploymentRepository deploymentRepository) : IRequestHandler<CreateDeploymentCommand, Deployment>
 {
-	public async Task<bool> Handle(CreateDeploymentCommand request, CancellationToken cancellationToken)
+	public async Task<Deployment> Handle(CreateDeploymentCommand request, CancellationToken cancellationToken)
 	{
-		return await deploymentRepository.CreateDeployment(request.Deployment, cancellationToken);
+		var deployment = new Deployment
+		{
+			ApiVersion = request.ApiVersion,
+			Kind = request.Kind,
+			Metadata = new ObjectMeta
+			{
+				Uid = Guid.CreateVersion7(DateTimeOffset.UtcNow).ToString(),
+				Name = request.DeploymentRequest.Name,
+				Namespace = request.DeploymentRequest.Namespace,
+			},
+		};
+		await deploymentRepository.CreateDeployment(deployment, cancellationToken);
+		return deployment;
 	}
 }

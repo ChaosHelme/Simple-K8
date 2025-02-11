@@ -66,7 +66,7 @@ public partial class Event
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("metadata", Required = Newtonsoft.Json.Required.Always)]
 	[System.ComponentModel.DataAnnotations.Required]
-	public ObjectMeta Metadata { get; set; } = new ObjectMeta();
+	public ObjectMeta Metadata { get; set; }
 
 	/// <summary>
 	/// This should be a short, machine understandable string that gives the reason for the transition into the object's current status.

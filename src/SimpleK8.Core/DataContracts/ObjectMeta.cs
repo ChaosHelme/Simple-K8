@@ -1,29 +1,33 @@
+using System.Text.Json.Serialization;
+
 namespace SimpleK8.Core.DataContracts;
 
 /// <summary>
 /// ObjectMeta is metadata that all persisted resources must have, which includes all objects users must create.
 /// </summary>
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-public class ObjectMeta
+public record ObjectMeta
 {
 	/// <summary>
 	/// Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("annotations", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public IDictionary<string, string> Annotations { get; set; }
+	[JsonPropertyName("annotations")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public IDictionary<string, string> Annotations { get; set; } = new Dictionary<string, string>();
 
 	/// <summary>
 	/// CreationTimestamp is a timestamp representing the server time when this object was created. It is not guaranteed to be set in happens-before order across separate operations. Clients may not set this value. It is represented in RFC3339 form and is in UTC.
 	/// <br/>
 	/// <br/>Populated by the system. Read-only. Null for lists. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("creationTimestamp", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+	[JsonPropertyName("creationTimestamp")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public DateTimeOffset? CreationTimestamp { get; set; }
 
 	/// <summary>
 	/// Number of seconds allowed for this object to gracefully terminate before it will be removed from the system. Only set when deletionTimestamp is also set. May only be shortened. Read-only.
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("deletionGracePeriodSeconds", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+	[JsonPropertyName("deletionGracePeriodSeconds")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public long? DeletionGracePeriodSeconds { get; set; }
 
 	/// <summary>
@@ -31,14 +35,16 @@ public class ObjectMeta
 	/// <br/>
 	/// <br/>Populated by the system when a graceful deletion is requested. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("deletionTimestamp", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+	[JsonPropertyName("deletionTimestamp")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public DateTimeOffset? DeletionTimestamp { get; set; }
 
 	/// <summary>
 	/// Must be empty before the object is deleted from the registry. Each entry is an identifier for the responsible component that will remove the entry from the list. If the deletionTimestamp of the object is non-nil, entries in this list can only be removed. Finalizers may be processed and removed in any order.  Order is NOT enforced because it introduces significant risk of stuck finalizers. finalizers is a shared field, any actor with permission can reorder it. If the finalizer list is processed in order, then this can lead to a situation in which the component responsible for the first finalizer in the list is waiting for a signal (field value, external system, or other) produced by a component responsible for a finalizer later in the list, resulting in a deadlock. Without enforced ordering finalizers are free to order amongst themselves and are not vulnerable to ordering changes in the list.
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("finalizers", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public List<string> Finalizers { get; set; }
+	[JsonPropertyName("finalizers")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public List<string> Finalizers { get; set; } = [];
 
 	/// <summary>
 	/// GenerateName is an optional prefix, used by the server, to generate a unique name ONLY IF the Name field has not been provided. If this field is used, the name returned to the client will be different than the name passed. This value will also be combined with a unique suffix. The provided value has the same validation rules as the Name field, and may be truncated by the length of the suffix required to make the value unique on the server.
@@ -47,67 +53,76 @@ public class ObjectMeta
 	/// <br/>
 	/// <br/>Applied only if Name is not specified. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("generateName", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public string GenerateName { get; set; }
+	[JsonPropertyName("generateName")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? GenerateName { get; set; }
 
 	/// <summary>
 	/// A sequence number representing a specific generation of the desired state. Populated by the system. Read-only.
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("generation", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+	[JsonPropertyName("generation")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
 	public long? Generation { get; set; }
 
 	/// <summary>
 	/// Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("labels", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public IDictionary<string, string> Labels { get; set; }
+	[JsonPropertyName("labels")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public IDictionary<string, string> Labels { get; set; } = new Dictionary<string, string>();
 
 	/// <summary>
 	/// ManagedFields maps workflow-id and version to the set of fields that are managed by that workflow. This is mostly for internal housekeeping, and users typically shouldn't need to set or understand this field. A workflow can be the user's name, a controller's name, or the name of a specific apply path like "ci-cd". The set of fields is always in the version that the workflow used when modifying the object.
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("managedFields", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public List<ManagedFieldsEntry> ManagedFields { get; set; }
+	[JsonPropertyName("managedFields")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public List<ManagedFieldsEntry> ManagedFields { get; set; } = [];
 
 	/// <summary>
 	/// Name must be unique within a namespace. Is required when creating resources, although some resources may allow a client to request the generation of an appropriate name automatically. Name is primarily intended for creation idempotence and configuration definition. Cannot be updated. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public string Name { get; set; }
+	[JsonPropertyName("name")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public required string Name { get; set; }
 
 	/// <summary>
 	/// Namespace defines the space within which each name must be unique. An empty namespace is equivalent to the "default" namespace, but "default" is the canonical representation. Not all objects are required to be scoped to a namespace - the value of this field for those objects will be empty.
 	/// <br/>
 	/// <br/>Must be a DNS_LABEL. Cannot be updated. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("namespace", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public string Namespace { get; set; }
+	[JsonPropertyName("namespace")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string Namespace { get; set; } = "default";
 
 	/// <summary>
 	/// List of objects depended by this object. If ALL objects in the list have been deleted, this object will be garbage collected. If this object is managed by a controller, then an entry in this list will point to this controller, with the controller field set to true. There cannot be more than one managing controller.
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("ownerReferences", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public List<OwnerReference> OwnerReferences { get; set; }
+	[JsonPropertyName("ownerReferences")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public List<OwnerReference> OwnerReferences { get; set; } = [];
 
 	/// <summary>
 	/// An opaque value that represents the internal version of this object that can be used by clients to determine when objects have changed. May be used for optimistic concurrency, change detection, and the watch operation on a resource or set of resources. Clients must treat these values as opaque and passed unmodified back to the server. They may only be valid for a particular resource or set of resources.
 	/// <br/>
 	/// <br/>Populated by the system. Read-only. Value must be treated as opaque by clients and . More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("resourceVersion", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public string ResourceVersion { get; set; }
+	[JsonPropertyName("resourceVersion")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? ResourceVersion { get; private set; }
 
 	/// <summary>
 	/// Deprecated: selfLink is a legacy read-only field that is no longer populated by the system.
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("selfLink", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public string SelfLink { get; set; }
+	[JsonPropertyName("selfLink")]
+	[JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+	public string? SelfLink { get; private set; }
 
 	/// <summary>
 	/// UID is the unique in time and space value for this object. It is typically generated by the server on successful creation of a resource and is not allowed to change on PUT operations.
 	/// <br/>
 	/// <br/>Populated by the system. Read-only. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids
 	/// </summary>
-	[Newtonsoft.Json.JsonProperty("uid", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public string Uid { get; set; }
-
+	[JsonPropertyName("uid")]
+	[JsonRequired]
+	public required string Uid { get; init; }
 }

@@ -6,8 +6,8 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Serilog;
 using SimpleK8.Api.Configurations;
-using SimpleK8.Cluster;
-using SimpleK8.Cluster.Queries;
+using SimpleK8.Application;
+using SimpleK8.Application.Queries;
 using SimpleK8.Infrastructure;
 
 namespace SimpleK8.Api.Extensions;

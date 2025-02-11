@@ -3,7 +3,6 @@ namespace SimpleK8.Core.DataContracts;
 /// <summary>
 /// Deployment enables declarative updates for Pods and ReplicaSets.
 /// </summary>
-[System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
 public class Deployment
 {
 	/// <summary>
@@ -36,8 +35,9 @@ public class Deployment
 	[Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
 	public DeploymentStatus Status { get; set; }
 
-	public object? DetermineDiff(DeploymentStatus deploymentStatus)
+	public object? DetermineDiff()
 	{
-		throw new NotImplementedException();
+		var replicaDiff = Status.AvailableReplicas - Status.UnavailableReplicas;
+		return new { replicaDiff };
 	}
 }

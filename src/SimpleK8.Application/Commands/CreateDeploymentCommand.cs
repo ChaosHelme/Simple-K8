@@ -1,6 +1,7 @@
 using MediatR;
+using SimpleK8.Application.Requests;
 using SimpleK8.Core.DataContracts;
 
-namespace SimpleK8.Cluster.Commands;
+namespace SimpleK8.Application.Commands;
 
-public record CreateDeploymentCommand(Deployment Deployment) : IRequest<bool>;
+public record CreateDeploymentCommand(CreateDeploymentRequest DeploymentRequest, string ApiVersion, string Kind) : IRequest<Deployment>;

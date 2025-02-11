@@ -1,7 +1,7 @@
 using MediatR;
 using SimpleK8.Core.DataContracts;
 
-namespace SimpleK8.Cluster.Queries.Handlers;
+namespace SimpleK8.Application.Queries.Handlers;
 
 public class ListDeploymentNamespacesQueryHandler(IDeploymentRepository deploymentRepository) 
 	: IRequestHandler<ListDeploymentNamespacesQuery, DeploymentList>

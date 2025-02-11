@@ -1,9 +1,9 @@
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SimpleK8.Cluster.Commands;
-using SimpleK8.Cluster.Dtos;
-using SimpleK8.Cluster.Queries;
+using SimpleK8.Application.Commands;
+using SimpleK8.Application.Queries;
+using SimpleK8.Application.Requests;
 using SimpleK8.Core.DataContracts;
 
 namespace SimpleK8.Api.Controllers.Workload;
@@ -57,7 +57,7 @@ public class DeploymentsController(IMediator mediator) : ControllerBase
 	/// <summary>
 	/// Create a <see cref="Deployment"/>
 	/// </summary>
-	/// <param name="deployment"></param>
+	/// <param name="deploymentRequest"></param>
 	/// <param name="pretty">If 'true', then the output is pretty printed. Defaults to 'false'
 	/// unless the user-agent indicates a browser or command-line HTTP tool (curl and wget).</param>
 	/// <param name="dryRun">When present, indicates that modifications should not be persisted.
@@ -65,11 +65,11 @@ public class DeploymentsController(IMediator mediator) : ControllerBase
 	///     Valid values are: - All: all dry run stages will be processed</param>
 	/// <returns>201 with created <see cref="Deployment"/></returns>
 	[HttpPost("[controller]")]
-	public async Task<ActionResult<Deployment>> CreateDeployment([FromBody] Deployment deployment, 
+	public async Task<ActionResult<Deployment>> CreateDeployment([FromBody] CreateDeploymentRequest deploymentRequest, 
 		[FromQuery] bool pretty = false ,[FromQuery] bool dryRun = false)
 	{
-		var result = await mediator.Send(new CreateDeploymentCommand(deployment));
-		return result ? Created($"namespaces/{deployment.Metadata.Namespace}/deployments/{deployment.Metadata.Name}", deployment) : NotFound();
+		var result = await mediator.Send(new CreateDeploymentCommand(deploymentRequest, "v1", "deployments"));
+		return Created($"namespaces/{result.Metadata.Namespace}/deployments/{result.Metadata.Name}", result);
 	}
 
 	/// <summary>
@@ -77,12 +77,12 @@ public class DeploymentsController(IMediator mediator) : ControllerBase
 	/// </summary>
 	/// <param name="namespaceName">object name and auth scope, such as for teams and projects</param>
 	/// <param name="deploymentName">name of the Deployment</param>
-	/// <param name="deploymentUpdate"></param>
+	/// <param name="updateDeploymentUpdate"></param>
 	/// <returns></returns>
 	[HttpPatch("namespaces/{namespaceName}/[controller]/{deploymentName}")]
-	public ActionResult<Deployment> UpdateDeployment(string namespaceName, string deploymentName, [FromBody] DeploymentUpdateDto deploymentUpdate)
+	public ActionResult<Deployment> UpdateDeployment(string namespaceName, string deploymentName, [FromBody] UpdateDeploymentRequest updateDeploymentUpdate)
 	{
-		return Ok(mediator.Send(new UpdateDeploymentCommand(namespaceName, deploymentName, deploymentUpdate)));
+		return Ok(mediator.Send(new UpdateDeploymentCommand(namespaceName, deploymentName, updateDeploymentUpdate)));
 	}
 
 	/// <summary>

@@ -1,7 +1,7 @@
 using MediatR;
-using SimpleK8.Cluster.Dtos;
+using SimpleK8.Application.Requests;
 using SimpleK8.Core.DataContracts;
 
-namespace SimpleK8.Cluster.Commands;
+namespace SimpleK8.Application.Commands;
 
-public record UpdateDeploymentCommand(string NamespaceName, string Name, DeploymentUpdateDto Update) : IRequest<Deployment?>;
+public record UpdateDeploymentCommand(string NamespaceName, string Name, UpdateDeploymentRequest Update) : IRequest<Deployment?>;
