@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleK8.Simulation.Console", "SimpleK8.Simulation.Console\SimpleK8.Simulation.Console.csproj", "{F881131D-4ED4-4C67-8B3A-7A40C2C9B292}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleK8.Core", "SimpleK8.Core\SimpleK8.Core.csproj", "{610BD893-FAB2-4527-8B0A-EDA0E76612A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleK8.Application", "SimpleK8.Application\SimpleK8.Application.csproj", "{7C46045A-196E-4432-B830-FD89B6A5757D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleK8.Api.Application", "SimpleK8.Api.Application\SimpleK8.Api.Application.csproj", "{7C46045A-196E-4432-B830-FD89B6A5757D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleK8.Worker", "SimpleK8.Worker\SimpleK8.Worker.csproj", "{569587FE-3370-4422-A525-3C40703A113F}"
 EndProject
@@ -18,16 +16,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionIt
 		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleK8.Application.Common", "SimpleK8.Application.Common\SimpleK8.Application.Common.csproj", "{1951D51C-6433-4B69-A510-6108CA8AD7B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleK8.Services", "SimpleK8.Services\SimpleK8.Services.csproj", "{1CDCC8A2-F2A6-4BEA-88CD-F62C9EFA7136}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F881131D-4ED4-4C67-8B3A-7A40C2C9B292}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F881131D-4ED4-4C67-8B3A-7A40C2C9B292}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F881131D-4ED4-4C67-8B3A-7A40C2C9B292}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F881131D-4ED4-4C67-8B3A-7A40C2C9B292}.Release|Any CPU.Build.0 = Release|Any CPU
 		{610BD893-FAB2-4527-8B0A-EDA0E76612A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{610BD893-FAB2-4527-8B0A-EDA0E76612A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{610BD893-FAB2-4527-8B0A-EDA0E76612A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -48,5 +46,13 @@ Global
 		{C0385869-933A-4DAA-B858-287179FF6573}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0385869-933A-4DAA-B858-287179FF6573}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0385869-933A-4DAA-B858-287179FF6573}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1951D51C-6433-4B69-A510-6108CA8AD7B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1951D51C-6433-4B69-A510-6108CA8AD7B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1951D51C-6433-4B69-A510-6108CA8AD7B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1951D51C-6433-4B69-A510-6108CA8AD7B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CDCC8A2-F2A6-4BEA-88CD-F62C9EFA7136}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CDCC8A2-F2A6-4BEA-88CD-F62C9EFA7136}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CDCC8A2-F2A6-4BEA-88CD-F62C9EFA7136}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CDCC8A2-F2A6-4BEA-88CD-F62C9EFA7136}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

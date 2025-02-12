@@ -7,11 +7,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="dotnet-etcd" Version="7.2.0" />
+      <ProjectReference Include="..\SimpleK8.Core\SimpleK8.Core.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\SimpleK8.Application.Common\SimpleK8.Application.Common.csproj" />
+      <PackageReference Include="Riok.Mapperly" Version="4.1.1" />
     </ItemGroup>
 
 </Project>

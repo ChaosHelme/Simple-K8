@@ -125,4 +125,7 @@ public record ObjectMeta
 	[JsonPropertyName("uid")]
 	[JsonRequired]
 	public required string Uid { get; init; }
+
+	[JsonIgnore]
+	public string FullName => $"{Namespace}/{Name}";
 }

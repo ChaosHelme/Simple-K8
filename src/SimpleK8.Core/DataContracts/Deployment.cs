@@ -33,11 +33,12 @@ public class Deployment
 	/// Most recently observed status of the Deployment.
 	/// </summary>
 	[Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-	public DeploymentStatus Status { get; set; }
+	public DeploymentStatus Status { get; set; } = new();
 
-	public object? DetermineDiff()
+	public object DetermineDiff()
 	{
 		var replicaDiff = Status.AvailableReplicas - Status.UnavailableReplicas;
-		return new { replicaDiff };
+		var replicas = Spec.Replicas;
+		return new { replicaDiff, replicas };
 	}
 }

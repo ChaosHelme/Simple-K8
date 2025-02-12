@@ -6,9 +6,8 @@ using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Serilog;
 using SimpleK8.Api.Configurations;
-using SimpleK8.Application;
-using SimpleK8.Application.Mapper;
-using SimpleK8.Application.Queries;
+using SimpleK8.Api.Application.Queries;
+using SimpleK8.Application.Common.Repositories;
 using SimpleK8.Infrastructure;
 
 namespace SimpleK8.Api.Extensions;
@@ -52,7 +51,7 @@ internal static class WebApplicationBuilderExtension {
 		builder.Services.AddTransient<IEtcdClient, EtcdClient>(_
 			=> new EtcdClient(builder.Configuration.GetConnectionString("etcd"),
 				configureChannelOptions: options => options.Credentials = ChannelCredentials.Insecure));
-		builder.Services.AddTransient<IDeploymentRepository, DeploymentRepository>();
+		builder.Services.AddTransient<IDeploymentRepository, EtcdDeploymentRepository>();
 		
 		// builder.Services.AddTransient<IDbConnectionFactory, NpgsqlServerConnectionFactory>();
 		// builder.Services

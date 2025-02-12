@@ -1,9 +1,9 @@
 using Asp.Versioning;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using SimpleK8.Application.Commands;
-using SimpleK8.Application.Queries;
-using SimpleK8.Application.Requests;
+using SimpleK8.Api.Application.Commands;
+using SimpleK8.Api.Application.Queries;
+using SimpleK8.Application.Common.Requests;
 using SimpleK8.Core.DataContracts;
 
 namespace SimpleK8.Api.Controllers.Workload;
